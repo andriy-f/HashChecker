@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="net/testpro/AESFastTest.java|net/testpro/RegressionTest.java|net/testpro/AllTests.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="D:/Install/Development/_Lib/Crypto/BouncyCastle/Java/jars-146/bcprov-ext-jdk16-146.jar"/>
+	<classpathentry kind="lib" path="D:/Install/Development/_Lib/Crypto/BouncyCastle/Java/jars-146/bctest-jdk16-146.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
