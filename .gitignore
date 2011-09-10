@@ -1,9 +1,10 @@
 
 bin
 obj
+Debug
+Release
 *.suo
+*.user
 _ReSharper.*
 *.ReSharper
-*.ReSharper.user
-/TestPro/Readme.txt
-/A Text doc.txt
+/LocalDoc.txt
