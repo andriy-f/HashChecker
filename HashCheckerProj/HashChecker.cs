@@ -266,7 +266,7 @@ namespace HashCheckerProj
                 
                 HashCheckRes hchRes = new HashCheckRes(); 
 
-                FileInfo fi = new System.IO.FileInfo(tbChSumFile.Text);                
+                FileInfo fi = new FileInfo(tbChSumFile.Text);                
                 string chsumfExtLower = fi.Extension.Remove(0, 1).ToLowerInvariant();//ala "md5"
                 //Identifying Checksum type from ext
                 int DefChSumType = -1;//Unknown
