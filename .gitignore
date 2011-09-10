@@ -4,7 +4,7 @@ obj
 Debug
 Release
 *.suo
-*.ReSharper.user
+*.user
 _ReSharper.*
 *.ReSharper
 /LocalDoc.txt
