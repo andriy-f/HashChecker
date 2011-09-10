@@ -1,7 +1,1 @@
-First redme
-VW7 change
-vw7 2 fr reposvw7 3
-ch 3
-ch 4
-ch 5
-After tryfork
+1.0.0.0 can check different hashsum files (sfv, md5, sha1 - sha512) and check hash from clipboard
