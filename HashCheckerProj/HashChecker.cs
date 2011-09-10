@@ -75,32 +75,22 @@ namespace HashCheckerProj
 
         #region Cross Thread related
 
-        //private void tbLogAppendText(string text)
-        //{
-        //    if (this.tbLog.InvokeRequired)
-        //    {
-        //        TextBoxAppendText d = new TextBoxAppendText(tbLogAppendText);
-        //        this.Invoke(d, new object[] { text });
-        //    }
-        //    else this.tbLog.AppendText(text);
-        //}
-
         private void RtbLogAppendText(string text)
         {
-            if (this.rtbLog.InvokeRequired)
+            if (rtbLog.InvokeRequired)
             {
                 TextBoxAppendText d = RtbLogAppendText;
-                this.Invoke(d, new object[] { text, Color.Black });
+                Invoke(d, new object[] { text, Color.Black });
             }
             else AppendText(rtbLog, Color.Black, text);
         }
 
         private void RtbLogAppendText(string text, Color color)
         {
-            if (this.rtbLog.InvokeRequired)
+            if (rtbLog.InvokeRequired)
             {
                 TextBoxAppendText d = RtbLogAppendText;
-                this.Invoke(d, new object[] { text, color });
+                Invoke(d, new object[] { text, color });
             }
             else AppendText(rtbLog, color, text);
         }
@@ -122,57 +112,54 @@ namespace HashCheckerProj
             box.SelectionLength = 0; // clear
         }
 
-        //private void tbLogAppendTextDirect(string text)
-        //{ this.tbLog.AppendText(text); }
-
         private void setFormToNormal()
         {
-            if (this.panel1.InvokeRequired)
+            if (panel1.InvokeRequired)
             {
                 //SomeAction d = new SomeAction(delegate(){panel1.Enabled = true;});
                 //SomeAction d = delegate() { panel1.Enabled = true; };
                 Action d= ()=> panel1.Enabled = true;
-                this.Invoke(d, null);
+                Invoke(d, null);
             }
             else panel1.Enabled = true;
 
-            if (this.bStop.InvokeRequired)
+            if (bStop.InvokeRequired)
             {
                 Action d = delegate() { bStop.Enabled = false; };
-                this.Invoke(d, null);
+                Invoke(d, null);
             }
             else bStop.Enabled = false;
 
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 Action d = delegate() { this.Text = Resources.HashChecker_setFormToNormal_Hash_Checker; };
-                this.Invoke(d, null);
+                Invoke(d, null);
             }
-            else this.Text = Resources.HashChecker_setFormToNormal_Hash_Checker;
+            else Text = Resources.HashChecker_setFormToNormal_Hash_Checker;
         }
 
         private void progressStep()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 //SomeAction d = ;
-                this.Invoke((Action)progressStep, null);
+                Invoke((Action)progressStep, null);
             }
             else            
-                this.Text = String.Format("Hash Checker ({0}/{1} entries processed)", ++progress, progrMax);
+                Text = String.Format("Hash Checker ({0}/{1} entries processed)", ++progress, progrMax);
         }
 
         private void initProgress()
         {
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 //SomeAction d = initProgress;
-                this.Invoke((Action)initProgress, null);
+                Invoke((Action)initProgress, null);
             }
             else
             {
                 progress = 0;
-                this.Text = String.Format("Hash Checker ({0}/{1} entries processed)", 0, progrMax);
+                Text = String.Format("Hash Checker ({0}/{1} entries processed)", 0, progrMax);
             }
         }
 
@@ -210,20 +197,19 @@ namespace HashCheckerProj
             {
                 Comp2ClipHashParams c2CParams = (Comp2ClipHashParams)ob;
                 
-                int res=chHashAndLog(c2CParams.Filename, c2CParams.Hashtype, c2CParams.Hash);
+                EntryProcessingResult res=chHashAndLog(c2CParams.Filename, c2CParams.Hashtype, c2CParams.Hash);
                 switch(res)
                 {
-                    case -1:
+                    case EntryProcessingResult.NotFound:
                         Program.DefMsgBox(string.Format("Input file not found: {0}", 
                             c2CParams.Filename));
                         break;
-                    case 0:
-                        Program.DefMsgBox(string.Format("File '{0}' is CORRUPT.\nIt doesn't has hash {1}",
+                    case EntryProcessingResult.Wrong:
+                        Program.DefMsgBox(string.Format("File '{0}' is CORRUPT.\n\nIt doesn't have hash {1}",
                             c2CParams.Filename, c2CParams.Hash));
-                        
                         break;
-                    case 1:
-                        Program.DefMsgBox(string.Format("File '{0}' is OK:\nhash: {1}", 
+                    case EntryProcessingResult.Correct:
+                        Program.DefMsgBox(string.Format("File '{0}' is OK:\n\n(Hash: {1})", 
                             c2CParams.Filename, c2CParams.Hash));
                         break;
                 }
@@ -236,8 +222,6 @@ namespace HashCheckerProj
             }
             finally
             {
-                //Program.DefMsgBoxAndExit("exit");
-                //Program.DefMsgBox("Finally"+string.Format("Exit Attempt: {0}", exitAttempt));
                 if (!exitAttempt)
                 {
                     setFormToNormal();
@@ -275,24 +259,25 @@ namespace HashCheckerProj
         {
             try
             {                
-                string[] lines = System.IO.File.ReadAllLines(tbChSumFile.Text, Encoding.Default);
+                string[] lines = File.ReadAllLines(tbChSumFile.Text, Encoding.Default);
                 progrMax = lines.Length;
                 initProgress();
 
-                int i;
+                
                 HashCheckRes hchRes = new HashCheckRes(); 
 
                 System.IO.FileInfo fi = new System.IO.FileInfo(tbChSumFile.Text);                
                 string chsumfExtLower = fi.Extension.Remove(0, 1).ToLowerInvariant();//ala "md5"
                 //Identifying Checksum type from ext
                 int DefChSumType = -1;//Unknown
-                for (i = 0; i < ChSumTypesCnt; i++)
+                for (int i = 0; i < ChSumTypesCnt; i++)
                     if (chsumfExtLower == ChSumTypeStrs[i]) { DefChSumType = i; break; }
+                
                 foreach (string ln in lines)
                 {
                     if (ln.Length > 0 && ln[0] != ';')
                     {
-                        i = 0;
+                        int i = 0;
                         int firstspace = ln.IndexOf(' ');
                         string hash;
                         string fname;//file with hashes
@@ -312,8 +297,10 @@ namespace HashCheckerProj
                         }
                         if (i == ChSumTypesCnt)//string ln is not UNIX-style -> ChSumType is defined by extension (DefChSumType)
                         {
-                            if (DefChSumType == 0) parseSFVString(ln, out fname, out hash);                            
-                            else parseDefString(ln, out fname, out hash);
+                            if (DefChSumType == 0)
+                                parseSFVString(ln, out fname, out hash);                            
+                            else 
+                                parseDefString(ln, out fname, out hash);
                             hchRes.append(chHashAndLog(fname, DefChSumType, hash));                            
                         }
                     }
@@ -334,6 +321,10 @@ namespace HashCheckerProj
                 if (exitAttempt) return;
                 RtbLogAppendText("Check Aborted", Color.Red);
                 //MessageBox.Show(String.Format("{0}", ex));
+            }
+            catch(Exception ex)
+            {
+                 Utils.MsgBoxError("Error while performing check: "+ex.Message);   
             }
             finally
             {
@@ -372,12 +363,12 @@ namespace HashCheckerProj
             hash = hash.Trim();
         }
 
-        private int chHashAndLog(string entry, int hashtype, string hash)//entry - fileentry in ChSumFile
-        {//result: 0 - wrong, 1 - correct, -1 - notfound
+        private EntryProcessingResult chHashAndLog(string entry, int hashtype, string hash)//entry - fileentry in ChSumFile
+        {
             string fname = entry;
             if (File.Exists(fname) || File.Exists(fname = tbDir.Text + "\\" + fname))
             {
-                System.IO.FileInfo fi = new System.IO.FileInfo(fname);
+                FileInfo fi = new System.IO.FileInfo(fname);
                 switch (cbLogShowSelIndex)
                 {
                     case 0: RtbLogAppendText(entry + "... "); 
@@ -389,12 +380,12 @@ namespace HashCheckerProj
                 }
                 bool correct=CheckFileHash(fname, hashtype, hash);
                 RtbLogAppendText((correct ? "OK" : "WRONG!") + Environment.NewLine, correct ? Color.Black : Color.Red);
-                return correct?1:0;
+                return correct ? EntryProcessingResult.Correct : EntryProcessingResult.Wrong;
             }
             else
             {
                 RtbLogAppendText(entry + "... Not Found" + Environment.NewLine, Color.BlueViolet);
-                return -1;
+                return EntryProcessingResult.NotFound;
             }
         }
 
@@ -453,7 +444,7 @@ namespace HashCheckerProj
             }
             else if (cmdlineFName != null)//Parse hashFile(cmdlineFName) and verify hashes
             {
-                if (System.IO.File.Exists(cmdlineFName))
+                if (File.Exists(cmdlineFName))
                 {
                     tbChSumFile.Text = cmdlineFName;
                     tbDir.Text = extractFileDir(cmdlineFName);
@@ -463,9 +454,7 @@ namespace HashCheckerProj
                     callMyThread();
                 }
                 else
-                    MessageBox.Show(String.Format("Specified hashfile '{0}' doesn't exist", cmdlineFName),
-                                    Resources.HashChecker_setFormToNormal_Hash_Checker, MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
+                    Utils.MsgBoxError(String.Format("Specified hashfile '{0}' doesn't exist", cmdlineFName));
             }
         }
 
@@ -505,8 +494,8 @@ namespace HashCheckerProj
 
         private void bChFile_Click(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists(tbChSumFile.Text) &&
-                (tbDir.Text == "" || System.IO.Directory.Exists(tbDir.Text)))
+            if (File.Exists(tbChSumFile.Text) &&
+                (tbDir.Text == "" || Directory.Exists(tbDir.Text)))
             {
                 panel1.Enabled = false;
                 bStop.Enabled = true;
@@ -543,16 +532,13 @@ namespace HashCheckerProj
         {
             try
             {
-                HashCheckerProj.Properties.Settings.Default.ThreadPriority = cbPriority.SelectedIndex;
-                HashCheckerProj.Properties.Settings.Default.LogShow = cbLogShow.SelectedIndex;
-                HashCheckerProj.Properties.Settings.Default.Save();
+                Settings.Default.ThreadPriority = cbPriority.SelectedIndex;
+                Settings.Default.LogShow = cbLogShow.SelectedIndex;
+                Settings.Default.Save();
             }
             catch (System.Configuration.ConfigurationException ex)
             {
-                Program.DefMsgBoxWarning("Failed to save settings");
-#if DEBUG
-                throw;
-#endif
+                Utils.MsgBoxError("Failed to save settings: "+ex.Message);
             }
         }
 
@@ -570,70 +556,78 @@ namespace HashCheckerProj
 
         private void bHelp_Click(object sender, EventArgs e)
         {
-            Program.DefMsgBox(string.Format("Simple usage:\nClick Options and select associations. After that " +
+            Utils.MsgBoxInfo(string.Format("Simple usage:\nClick Options and select associations. After that " +
                                           "you can just open hash files in Explorer" +
                                           "\nAuthor: {0}", Application.CompanyName));
-            //MessageBox.Show(string.Format("Simple usage:\nClick Options and select associations. After that " +
-            //                              "you can just open hash files in Explorer"+
-            //                              "\nAuthor: {0}", Application.CompanyName), Application.ProductName, MessageBoxButtons.OK);
         }
 
         #endregion
 
         private void ClipboardCompare()
         {
-            if (Clipboard.ContainsText())
+            try
             {
-                string hash = Clipboard.GetText();
-                int hashtype = HashLength2HashType(hash.Length);
-                if (hashtype != -1)
+                if (Clipboard.ContainsText())
                 {
-                    tbChSumFile.Text = "";
-                    tbDir.Text = "";
-                    panel1.Enabled = false;
-                    bStop.Enabled = true;
-                    rtbLog.Clear();
-
-                    myThread = new Thread(PerformClipboardCheck);
-                    myThread.Start(new Comp2ClipHashParams
+                    string hash = Clipboard.GetText();
+                    int hashtype = HashLength2HashType(hash.Length);
+                    if (hashtype != -1)
                     {
-                        Filename = cmdlineFName,
-                        Hash = hash,
-                        Hashtype = hashtype
-                    });
+                        tbChSumFile.Text = "";
+                        tbDir.Text = "";
+                        panel1.Enabled = false;
+                        bStop.Enabled = true;
+                        rtbLog.Clear();
+
+                        myThread = new Thread(PerformClipboardCheck);
+                        myThread.Start(new Comp2ClipHashParams
+                                           {
+                                               Filename = cmdlineFName,
+                                               Hash = hash,
+                                               Hashtype = hashtype
+                                           });
+
+                    }
+                    else
+                    {
+                        Utils.MsgBoxExclamation("That's not a hash in Clipboard");
+                        Application.Exit();
+                    }
 
                 }
                 else
                 {
-                    Program.DefMsgBox("That's not a hash in Clipboard");
+                    Utils.MsgBoxExclamation("No hash in Clipboard to compare");
                     Application.Exit();
                 }
-
             }
-            else
+            catch(Exception ex)
             {
-                Program.DefMsgBox("No hash in Clipboard to compare");
-                Application.Exit();
+                Utils.MsgBoxError("Error while comparing to hash in clipboard: "+ex.Message);
             }
         }
         
         void DefMsgBoxInvoker(string str)
         {
-            //MessageBox.Show(str, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
                 Action<string> d = DefMsgBoxInvoker;
-                this.Invoke(d, new object[] { str });
+                Invoke(d, new object[] { str });
             }
             else
-                MessageBox.Show(str, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //Application.Exit();
+                Utils.MsgBoxInfo(str);
+            
         }
     }
 
-    
-
     #region Class HashCheckRes
+
+    public enum EntryProcessingResult
+    {
+        NotFound = -1,
+        Wrong = 0,
+        Correct = 1
+    };
 
     public class HashCheckRes
     {
@@ -644,13 +638,13 @@ namespace HashCheckerProj
         public HashCheckRes(int _correct, int _wrong, int _notfound)
         { correct = _correct; wrong = _wrong; notfound = _notfound; }
 
-        public void append(int res)
+        public void append(EntryProcessingResult res)
         {
             switch (res)
             {
-                case -1: notfound++; break;
-                case 0: wrong++; break;
-                case 1: correct++; break;
+                case EntryProcessingResult.NotFound: notfound++; break;
+                case EntryProcessingResult.Wrong: wrong++; break;
+                case EntryProcessingResult.Correct: correct++; break;
             }
         }
 
@@ -663,7 +657,8 @@ namespace HashCheckerProj
 
     #endregion
 
-#region Hash
+    #region Comp2ClipHashParams
+
     class Comp2ClipHashParams
     {
         public string Filename;
@@ -671,5 +666,6 @@ namespace HashCheckerProj
         public int Hashtype;
         //public string Hash { get; set; }
     }
-#endregion
+
+    #endregion
 }
