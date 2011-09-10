@@ -322,9 +322,9 @@ namespace HashCheckerProj
                 RtbLogAppendText("Check Aborted", Color.Red);
                 //MessageBox.Show(String.Format("{0}", ex));
             }
-            catch(Exception ex)
+            catch(Exception )
             {
-                 Utils.MsgBoxError("Error while performing check: "+ex.Message);   
+                 Utils.MsgBoxError("Error while performing check: Probably invalid file format");   
             }
             finally
             {
