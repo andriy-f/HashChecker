@@ -1,0 +1,1 @@
+Unchecking *.ext in Options doesn't do anything
