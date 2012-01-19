@@ -201,15 +201,15 @@ namespace HashCheckerProj
                 switch(res)
                 {
                     case EntryProcessingResult.NotFound:
-                        Program.DefMsgBox(string.Format("Input file not found: {0}", 
+                        Utils.MsgBoxWarning(string.Format("Input file not found: {0}", 
                             c2CParams.Filename));
                         break;
                     case EntryProcessingResult.Wrong:
-                        Program.DefMsgBox(string.Format("File '{0}' is CORRUPT.\n\nIt doesn't have hash {1}",
+                        Utils.MsgBoxError(string.Format("File '{0}' is CORRUPT.\n\nIt doesn't have hash {1}",
                             c2CParams.Filename, c2CParams.Hash));
                         break;
                     case EntryProcessingResult.Correct:
-                        Program.DefMsgBox(string.Format("File '{0}' is OK:\n\n(Hash: {1})", 
+                        Utils.MsgBox(string.Format("File '{0}' is OK:\n\n(Hash: {1})", 
                             c2CParams.Filename, c2CParams.Hash));
                         break;
                 }
