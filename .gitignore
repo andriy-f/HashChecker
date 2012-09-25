@@ -8,3 +8,4 @@ Release
 _ReSharper.*
 *.ReSharper
 /LocalDoc.txt
+/HashCheckerProj/StyleCop.Cache
