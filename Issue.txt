@@ -1,2 +1,3 @@
 Unchecking *.ext in Options doesn't do anything.
+Added line 1
 added line 2
