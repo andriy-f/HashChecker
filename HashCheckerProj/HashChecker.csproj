@@ -106,7 +106,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\ClipboardCompare.cs" />
+    <Compile Include="Consts.cs" />
+    <Compile Include="CryptoUtils.cs" />
     <Compile Include="src\CRC32.cs" />
     <Compile Include="HashChecker.cs">
       <SubType>Form</SubType>
@@ -123,7 +124,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\HexRep.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="CustomMessageBoxes.cs" />
     <EmbeddedResource Include="HashChecker.resx">
       <DependentUpon>HashChecker.cs</DependentUpon>
     </EmbeddedResource>

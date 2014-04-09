@@ -9,3 +9,4 @@ _ReSharper.*
 *.ReSharper
 /LocalDoc.txt
 /HashCheckerProj/StyleCop.Cache
+/packages
