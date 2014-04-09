@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("HashChecker.exe")]
-[assembly: AssemblyDescription("HashChecking tool for CRC32, md5, sha1, sha256, sha384, sha512")]
+[assembly: AssemblyTitle("HashChecker.Tests")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Andriy Fetsyuk")]
-[assembly: AssemblyProduct("HashChecker")]
-[assembly: AssemblyCopyright("Copyright © Andriy Fetsyuk")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("HashChecker.Tests")]
+[assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0c7bd9ac-4f3e-4b1f-8290-088ccc5b84d5")]
+[assembly: Guid("c184d8c2-7c93-438b-abf6-ce96c292193c")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -71,19 +71,19 @@ namespace HashCheckerProj
                     hchkEntryKey.Close();
                 }
 
-                //File associations
+                // File associations
                 for (int i = 0; i < 7; i++)
                     if (clbAssoc.GetItemChecked(i))
                         Registry.SetValue(FullClassesPath + clbIndex2HashFileType(i), "", HchkEntry);
 
-                //Compare to hash in Clipboard file entry
+                // Compare to hash in Clipboard file entry
                 if(cbAddComp2Clip.Checked)
                     Registry.SetValue(Cmp2HshCommandFullPath, "", _shellCmp2HshClpbrdRegValue);
                 else DelSubKeyTreeNn(Cmp2HshPath);
             }
             catch (Exception ex)
             {
-                Program.DefMsgBoxError(Resources.OptionsForm_bOK_Click_Error_writing_to_registry_while_saving_data);
+                CustomMessageBoxes.Error(Resources.OptionsForm_bOK_Click_Error_writing_to_registry_while_saving_data);
 #if DEBUG
                 throw;
 #endif
