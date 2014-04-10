@@ -12,13 +12,29 @@
     [TestFixture]
     public class CryptoUtilsTests
     {
+        private const string File1Path = @"Data\file01.bin";
+        private const string File1Md5HashUpper = "5738077ABBE757E9D2DA3741115074B6";
+
         [Test]
         public void T01ValidateFileHashChunked()
         {
-            const string File = @"Data\file01.bin";
-            const string ExpectedMd5Hash = "5738077ABBE757E9D2DA3741115074B6";
+            Assert.True(
+                HashCheckerProj.CryptoUtils.ValidateFileHashChunked(
+                    File1Path, 
+                    MD5.Create(), 
+                    File1Md5HashUpper, 
+                    (i, j) => { }));
+        }
 
-            Assert.True(HashCheckerProj.CryptoUtils.ValidateFileHashChunked(File, MD5.Create(), ExpectedMd5Hash, (i, j) => { }));
+        [Test]
+        public void T02ValidateFileHashChunked()
+        {
+            Assert.True(
+                HashCheckerProj.CryptoUtils.ValidateFileHashChunked(
+                    File1Path,
+                    MD5.Create(),
+                    File1Md5HashUpper.ToLowerInvariant(),
+                    (i, j) => { }));
         }
     }
 }
