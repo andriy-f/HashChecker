@@ -7,34 +7,23 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    using HashCheckerProj;
+
     using NUnit.Framework;
 
     [TestFixture]
     public class CryptoUtilsTests
     {
-        private const string File1Path = @"Data\file01.bin";
-        private const string File1Md5HashUpper = "5738077ABBE757E9D2DA3741115074B6";
-
         [Test]
-        public void T01ValidateFileHashChunked()
+        public void T01IsChecksumType()
         {
-            Assert.True(
-                HashCheckerProj.CryptoUtils.ValidateFileHashChunked(
-                    File1Path, 
-                    MD5.Create(), 
-                    File1Md5HashUpper, 
-                    (i, j) => { }));
+            Assert.True(CryptoUtils.IsChecksumType("md5"));
         }
 
         [Test]
-        public void T02ValidateFileHashChunked()
+        public void T02IsChecksumType()
         {
-            Assert.True(
-                HashCheckerProj.CryptoUtils.ValidateFileHashChunked(
-                    File1Path,
-                    MD5.Create(),
-                    File1Md5HashUpper.ToLowerInvariant(),
-                    (i, j) => { }));
+            Assert.False(CryptoUtils.IsChecksumType("7z"));
         }
     }
 }

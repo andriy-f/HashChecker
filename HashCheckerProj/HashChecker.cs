@@ -3,6 +3,7 @@
     using System;
     using System.Drawing;
     using System.Text;
+    using System.Linq;
     using System.Windows.Forms;
     using System.IO;
     using System.Security.Cryptography;
@@ -210,7 +211,7 @@
             {
                 Comp2ClipHashParams c2CParams = (Comp2ClipHashParams)ob;
                 
-                EntryProcessingResult res=chHashAndLog(c2CParams.Filename, c2CParams.Hashtype, c2CParams.Hash);
+                EntryProcessingResult res=chHashAndLog(c2CParams.Filename, CryptoUtils.HashTypes[c2CParams.Hashtype], c2CParams.Hash);
                 switch(res)
                 {
                     case EntryProcessingResult.NotFound:
@@ -268,66 +269,38 @@
             }
         }
 
-        private void PerformCheck()//for thread
+        /// <summary>
+        /// Method for calling inside new thread
+        /// </summary>
+        private void PerformCheck()
         {
             try
-            {                
-                string[] lines = File.ReadAllLines(tbChSumFile.Text, Encoding.Default);
-                this.totalNOFilesToProcess = lines.Length;
+            {
+                var checksumFile = new ChecksumFile(this.tbChSumFile.Text);
+                var entries = checksumFile.Parse().ToArray();
+                this.totalNOFilesToProcess = entries.Count();
                 this.InitProgress();
                 
-                HashCheckRes hchRes = new HashCheckRes(); 
+                var hchRes = new HashCheckRes(); 
 
-                FileInfo fi = new FileInfo(tbChSumFile.Text);                
-                string chsumfExtLower = fi.Extension.Remove(0, 1).ToLowerInvariant();//ala "md5"
-                //Identifying Checksum type from ext
-                int DefChSumType = -1;//Unknown
-                for (int i = 0; i < ChSumTypesCnt; i++)
-                    if (chsumfExtLower == ChSumTypeStrs[i]) { DefChSumType = i; break; }
-                
-                foreach (string ln in lines)
+                foreach (var entry in entries)
                 {
-                    if (ln.Length > 0 && ln[0] != ';')
-                    {
-                        int i = 0;
-                        int firstspace = ln.IndexOf(' ');
-                        string hash;
-                        string fname;//file with hashes
-                        if (firstspace > -1)
-                        {
-                            string beforespace = ln.Substring(0, firstspace).ToLower();
-                            while (i < ChSumTypesCnt)//checking if any line in file is UNIX-style
-                            {
-                                if (beforespace == ChSumTypeStrs[i])
-                                {
-                                    parseUNIXSString(ln, out fname, out hash);
-                                    hchRes.append(chHashAndLog(fname, i, hash));
-                                    break;
-                                }
-
-                                i++;
-                            }
-                        }
-                        if (i == ChSumTypesCnt)//string ln is not UNIX-style -> ChSumType is defined by extension (DefChSumType)
-                        {
-                            if (DefChSumType == 0)
-                                parseSFVString(ln, out fname, out hash);                            
-                            else 
-                                parseDefString(ln, out fname, out hash);
-                            hchRes.append(chHashAndLog(fname, DefChSumType, hash));                            
-                        }
-                    }
+                    string hashType = entry.ChecksumType ?? checksumFile.Ext;
+                    var result = this.chHashAndLog(entry.Path, hashType, entry.Hash);
+                    hchRes.append(result);
                     this.ProgressStep();
                 }
-                RtbLogAppendText(String.Format(Environment.NewLine+"Correct: {0}, Wrong: {1}, Not Found: {2}, " +
-                                               "Total: {3}", 
-                                               hchRes.correct, 
-                                               hchRes.wrong, 
-                                               hchRes.notfound,
-                                               hchRes.getSum()), 
-                                               hchRes.wrong==0?
-                                               (hchRes.notfound==0?Color.Black:Color.BlueViolet)
-                                               :Color.Red);
+
+                // Display message
+                var message = string.Format(
+                    "{0}Correct: {1}, Wrong: {2}, Not Found: {3}, Total: {4}",
+                    Environment.NewLine,
+                    hchRes.correct,
+                    hchRes.wrong,
+                    hchRes.notfound,
+                    hchRes.getSum());
+                var color = hchRes.wrong == 0 ? (hchRes.notfound == 0 ? Color.Black : Color.BlueViolet) : Color.Red;
+                this.RtbLogAppendText(message, color);
             }
             catch (ThreadAbortException)
             {
@@ -376,7 +349,7 @@
             hash = hash.Trim();
         }
 
-        private EntryProcessingResult chHashAndLog(string entry, int hashtype, string hash)//entry - fileentry in ChSumFile
+        private EntryProcessingResult chHashAndLog(string entry, string hashtype, string hash)//entry - fileentry in ChSumFile
         {
             string fname = entry;
             if (File.Exists(fname) || File.Exists(fname = tbDir.Text + "\\" + fname))
@@ -402,46 +375,17 @@
             }
         }
 
-        private bool ValidateFileHash(string fname, int hashtype, string hash)
+        private bool ValidateFileHash(string fname, string hashtype, string hash)
         {
-            var algorithm = GetHashAlgorithm(hashtype);
-            return CryptoUtils.ValidateFileHashChunked(
-                fname, 
-                algorithm, 
-                hash,
-                this.DisplayProgressThreadSafe);
+            var validator = new FileHashCalculator { HashAlgorithm = CryptoUtils.ToHashAlgorithm(hashtype) };
+            validator.ChunkProcessed += this.DisplayProgressThreadSafe;
+
+            return ConvertUtils.ByteArraysEqual(
+                validator.CalculateFileHash(fname),
+                ConvertUtils.ToBytes(hash));
         }
 
-        private static HashAlgorithm GetHashAlgorithm(int hashTypeId)
-        {
-            HashAlgorithm algorithm;
-            switch (hashTypeId)
-            {
-                case 0: // sfv - CRC32                        
-                    algorithm = new CRC32();
-                    break;
-                case 1: // md5
-                    algorithm = MD5.Create();
-                    break;
-                case 2:
-                case 3: // sha or sha1
-                    algorithm = new SHA1CryptoServiceProvider();
-                    break;
-                case 4: // sha256                        
-                    algorithm = new SHA256Managed();
-                    break;
-                case 5: // sha384
-                    algorithm = new SHA384Managed();
-                    break;
-                case 6: // sha512
-                    algorithm = new SHA512Managed();
-                    break;
-                default:
-                    throw new ArgumentException("Is not recognized as valid algorithm index", "hashTypeId");
-            }
-
-            return algorithm;
-        }
+        
 
         #endregion
 
