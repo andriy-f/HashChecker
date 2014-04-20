@@ -21,18 +21,18 @@
         private const string ChecksumMd5 = @"Data\file01.md5";
         private const string ChecksumMd5V2 = @"Data\file01-v2.md5";
 
-        private static readonly IEnumerable<ChecksumFile.Entry> ChecksumSfvExpected = new List<ChecksumFile.Entry>
+        private static readonly IEnumerable<ChecksumFileEntry> ChecksumSfvExpected = new List<ChecksumFileEntry>
                                {
-                                   new ChecksumFile.Entry
+                                   new ChecksumFileEntry
                                        {
                                            Hash = "5BE4C5DF",
                                            Path = "file01.bin"
                                        }
                                };
 
-        private static readonly IEnumerable<ChecksumFile.Entry> ChecksumMd5Expected = new List<ChecksumFile.Entry>
+        private static readonly IEnumerable<ChecksumFileEntry> ChecksumMd5Expected = new List<ChecksumFileEntry>
                                {
-                                   new ChecksumFile.Entry
+                                   new ChecksumFileEntry
                                        {
                                            Hash = "5738077ABBE757E9D2DA3741115074B6",
                                            Path = "file01.bin"
@@ -60,9 +60,9 @@
             var checksumFile = new ChecksumFile(ChecksumUnixFile);
             var actual = checksumFile.Parse();
 
-            var expected = new List<ChecksumFile.Entry>
+            var expected = new List<ChecksumFileEntry>
                                {
-                                   new ChecksumFile.Entry
+                                   new ChecksumFileEntry
                                        {
                                            Hash = "5738077ABBE757E9D2DA3741115074B6",
                                            Path = "file01.bin",

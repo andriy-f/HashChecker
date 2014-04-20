@@ -9,6 +9,8 @@
     /// </summary>
     public class FileHashCalculator
     {
+        private volatile bool shouldStop;
+
         public FileHashCalculator()
         {
             this.ChunkSize = 64 * 1024 * 1024;
@@ -42,11 +44,21 @@
                         cryptoStream.Write(chunk, 0, tmpBytesRead);
                         this.OnChunkProcessed(fileBytesRead, fileLength);
                     }
-                    while (tmpBytesRead > 0);
+                    while (!this.shouldStop && tmpBytesRead > 0);
                 }
             }
 
+            if (this.shouldStop)
+            {
+                return null;
+            }
+
             return HashAlgorithm.Hash;
+        }
+
+        public void RequestStop()
+        {
+            this.shouldStop = true;
         }
 
         protected virtual void OnChunkProcessed(long bytesProcessed, long fileSize)

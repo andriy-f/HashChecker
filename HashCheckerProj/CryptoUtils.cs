@@ -80,10 +80,63 @@
                     algorithm = new SHA512Managed();
                     break;
                 default:
-                    throw new ArgumentException("Unrecognized algorithm index", "hashTypeId");
+                    throw new ArgumentException(@"Unrecognized algorithm index", "hashTypeId");
             }
 
             return algorithm;
+        }
+
+        /// <summary>
+        /// Deduct hash type from hash length
+        /// </summary>
+        /// <param name="hashLength">Length of string hash</param>
+        /// <returns></returns>
+        [Obsolete]
+        public static int DetectHashTypeIdx(int hashLength)
+        {
+            switch (hashLength)
+            {
+                case 8: // CRC32: 32 bit = 4 bytes = 8 characters
+                    return 0;
+                case 32: // md5: 128 bit = 16 bytes = 32 characters
+                    return 1;
+                case 40: // sha1: 160 bit = 20 bytes = 40 characters
+                    return 3;
+                case 64: // sha256: 256 bit = 32 bytes = 64 characters                      
+                    return 4;
+                case 96: // sha384: 384 bit = 48 bytes = 96 characters   
+                    return 5;
+                case 128: // sha512: 512 bit = 64 bytes = 128 characters   
+                    return 6;
+                default:
+                    throw new ArgumentException(@"Can't detect hash type", "hashLength");
+            }
+        }
+
+        /// <summary>
+        /// Deduct hash type from hash length
+        /// </summary>
+        /// <param name="hashLength">Length of string hash</param>
+        /// <returns></returns>
+        public static HashType DetectHashType(int hashLength)
+        {
+            switch (hashLength)
+            {
+                case 8: // CRC32: 32 bit = 4 bytes = 8 characters
+                    return HashType.Crc32;
+                case 32: // md5: 128 bit = 16 bytes = 32 characters
+                    return HashType.Md5;
+                case 40: // sha1: 160 bit = 20 bytes = 40 characters
+                    return HashType.Sha1;
+                case 64: // sha256: 256 bit = 32 bytes = 64 characters                      
+                    return HashType.Sha256;
+                case 96: // sha384: 384 bit = 48 bytes = 96 characters   
+                    return HashType.Sha384;
+                case 128: // sha512: 512 bit = 64 bytes = 128 characters   
+                    return HashType.Sha512;
+                default:
+                    throw new ArgumentException(@"Can't detect hash type", "hashLength");
+            }
         }
     }
 }
