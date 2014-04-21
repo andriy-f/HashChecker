@@ -41,7 +41,7 @@ no arguments : Standatd interface
                     case 2:
                         if (args[0] == "-comp2clipboard" || args[0] == "/comp2clipboard")
                         {
-                            Application.Run(new HashChecker(ProgramMode.ValidateWithClipboard, args[1]));
+                            Application.Run(new SingleFileCheckForm(args[1]));
                         }
                         else
                         {

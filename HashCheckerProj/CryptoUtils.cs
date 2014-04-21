@@ -138,5 +138,26 @@
                     throw new ArgumentException(@"Can't detect hash type", "hashLength");
             }
         }
+
+        public static HashAlgorithm ToHashAlgorithm(HashType hashType)
+        {
+            switch (hashType)
+            {
+                case HashType.Crc32:
+                    return new CRC32();
+                case HashType.Md5:
+                    return MD5.Create();
+                case HashType.Sha1:
+                    return new SHA1Managed();
+                case HashType.Sha256:
+                    return new SHA256Managed();
+                case HashType.Sha384:
+                    return new SHA384Managed();
+                case HashType.Sha512:
+                    return new SHA512Managed();
+                default:
+                    throw new ArgumentException(@"Unsupported algorithm type", "hashType");
+            }
+        }
     }
 }

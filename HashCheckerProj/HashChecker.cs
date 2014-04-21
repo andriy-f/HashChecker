@@ -16,8 +16,6 @@
         // locals
         private readonly string cmdlineFName;
 
-        private readonly bool comp2Clipboard;
-
         private volatile bool exitAttempt;
 
         private Thread myThread;
@@ -39,9 +37,7 @@
                 case ProgramMode.Standard:
                     break;
                 case ProgramMode.ValidateWithClipboard:
-                    this.cmdlineFName = filePath;
-                    this.comp2Clipboard = true;
-                    break;
+                    throw new ArgumentException("Use new form for checking clipboard hash");
                 case ProgramMode.ValidateChecksumFile:
                     this.cmdlineFName = filePath;
                     break;
@@ -227,51 +223,6 @@
             }
         }
 
-        private void PerformClipboardCheck(object ob)
-        {
-            try
-            {
-                var validateWithClipboardParams = (Comp2ClipHashParams)ob;
-                
-                var res = this.ValidateHashAndLog(validateWithClipboardParams.Filename, CryptoUtils.HashTypes[validateWithClipboardParams.Hashtype], validateWithClipboardParams.Hash);
-                switch (res)
-                {
-                    case EntryProcessingResult.NotFound:
-                        CustomMessageBoxes.Warning(string.Format("Input file not found: {0}", validateWithClipboardParams.Filename));
-                        break;
-                    case EntryProcessingResult.Wrong:
-                        CustomMessageBoxes.Error(
-                            string.Format(
-                                "File '{0}' is CORRUPT.\n\nIt doesn't have hash {1}",
-                                validateWithClipboardParams.Filename,
-                                validateWithClipboardParams.Hash));
-                        break;
-                    case EntryProcessingResult.Correct:
-                        CustomMessageBoxes.Simple(
-                            string.Format("File '{0}' is OK:\n\n(Hash: {1})", validateWithClipboardParams.Filename, validateWithClipboardParams.Hash));
-                        break;
-                }
-
-                this.Close();
-            }
-            catch (ThreadAbortException)
-            {
-                if (this.exitAttempt)
-                {
-                    return;
-                }
-
-                this.RtbLogAppendText("Check Aborted", Color.Red);
-            }
-            finally
-            {
-                if (!this.exitAttempt)
-                {
-                    this.SetFormToNormal();
-                }
-            }
-        }
-
         /// <summary>
         /// Method for calling inside new thread
         /// </summary>
@@ -378,12 +329,7 @@
 
         private void HashChecker_Load(object sender, EventArgs e)
         {
-            if (this.comp2Clipboard)
-            {
-                // Compare file to clipboard hash string
-                this.ClipboardCompare();
-            }
-            else if (this.cmdlineFName != null)
+            if (this.cmdlineFName != null)
             {
                 // Parse hashFile(cmdlineFName) and verify hashes
                 if (File.Exists(cmdlineFName))
@@ -504,53 +450,10 @@
             CustomMessageBoxes.Info(
                 string.Format(
                     "Simple usage:\nClick Options and select associations. After that "
-                    + "you can just open hash files in Explorer" + "\nAuthor: {0}",
-                    Application.CompanyName));
+                    + "you can just open hash files in Explorer"));
         }
 
         #endregion
-
-        private void ClipboardCompare()
-        {
-            try
-            {
-                if (Clipboard.ContainsText())
-                {
-                    string hash = Clipboard.GetText();
-                    int hashtype = CryptoUtils.DetectHashTypeIdx(hash.Length);
-                    if (hashtype != -1)
-                    {
-                        this.tbChSumFile.Text = string.Empty;
-                        this.tbDir.Text = string.Empty;
-                        this.panel1.Enabled = false;
-                        this.bStop.Enabled = true;
-                        this.rtbLog.Clear();
-
-                        this.myThread = new Thread(PerformClipboardCheck);
-                        this.myThread.Start(new Comp2ClipHashParams
-                                           {
-                                               Filename = cmdlineFName,
-                                               Hash = hash,
-                                               Hashtype = hashtype
-                                           });
-                    }
-                    else
-                    {
-                        CustomMessageBoxes.Exclamation("That's not a hash in Clipboard");
-                        Application.Exit();
-                    }
-                }
-                else
-                {
-                    CustomMessageBoxes.Exclamation("No hash in Clipboard to compare");
-                    Application.Exit();
-                }
-            }
-            catch (Exception ex)
-            {
-                CustomMessageBoxes.Error("Error while comparing to hash in clipboard: " + ex.Message);
-            }
-        }
         
         public struct Comp2ClipHashParams
         {
@@ -610,6 +513,11 @@
             {
                 return this.Correct + this.Wrong + this.NotFound;
             }
+        }
+
+        private void bAbout_Click(object sender, EventArgs e)
+        {
+            new AboutBox().ShowDialog();
         }
     }
 }
