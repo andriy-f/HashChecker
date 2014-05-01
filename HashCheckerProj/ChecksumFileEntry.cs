@@ -8,7 +8,7 @@ namespace HashCheckerProj
 
         public string Path { get; set; }
 
-        public string ChecksumType { get; set; }
+        public string HashType { get; set; }
 
         /// <summary>
         /// Parses UNIX-style string for fname and hash 
@@ -41,7 +41,7 @@ namespace HashCheckerProj
 
                 var entryHash = line.Substring(equalIndex + 1).TrimStart(' ');
 
-                return new ChecksumFileEntry { Hash = entryHash, Path = entryPath, ChecksumType = hashType };
+                return new ChecksumFileEntry { Hash = entryHash, Path = entryPath, HashType = hashType };
             }
             catch (FormatException)
             {

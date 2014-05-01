@@ -117,6 +117,8 @@
     <Compile Include="Consts.cs" />
     <Compile Include="CryptoUtils.cs" />
     <Compile Include="CustomSettings.cs" />
+    <Compile Include="EntryCheckResult.cs" />
+    <Compile Include="EntryResultType.cs" />
     <Compile Include="FileHashCalculator.cs" />
     <Compile Include="CRC32.cs" />
     <Compile Include="HashChecker.cs">

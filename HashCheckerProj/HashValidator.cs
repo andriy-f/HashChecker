@@ -4,79 +4,245 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
 
     public class HashValidator
     {
-        public event Action<int, int> FileProcessed;
+        private volatile int entriesCount;
 
-        public event Action<long, long> ChunkProcessed;
+        private volatile int entriesProcessed;
 
-        public int EntriesCount { get; private set; }
+        private volatile FileHashCalculator entryCalculator;
 
-        public int EntriesProcessed { get; private set; }
+        private volatile int notFoundCount;
+
+        private volatile bool shouldStop;
+
+        private volatile StateType state;
+
+        private volatile int validCount;
+
+        private volatile int wrongCount;
+
+        public delegate void EntryProcessedEventHandler(
+            EntryCheckResult checkResult,
+            int entriesProcessed,
+            int entriesCount);
+
+        public delegate void EntryChunkProcessedEventHandler(long bytesProcessed, long fileSize);
+
+        public event EntryProcessedEventHandler EntryProcessed;
+
+        public event EntryChunkProcessedEventHandler EntryChunkProcessed;
+
+        public event Action Finished;
+
+        public event Action<ChecksumFileEntry> StartProcessingEntry;
+
+        public enum StateType
+        {
+            Initial,
+            InProgress,
+            Finished
+        }
+
+        public int EntriesCount
+        {
+            get
+            {
+                return this.entriesCount;
+            }
+        }
+
+        public int EntriesProcessed
+        {
+            get
+            {
+                return this.entriesProcessed;
+            }
+        }
+
+        public int ValidCount
+        {
+            get
+            {
+                return this.validCount;
+            }
+        }
+
+        public int WrongCount
+        {
+            get
+            {
+                return this.wrongCount;
+            }
+        }
+
+        public int NotFoundCount
+        {
+            get
+            {
+                return this.notFoundCount;
+            }
+        }
 
         public string BaseDir { get; set; }
 
-        public void ValidateEntries(IEnumerable<ChecksumFileEntry> checksumFileEntries, string defaultHashAlgorithm)
+        /// <summary>
+        /// Is used when entry hashType is not defined
+        /// </summary>
+        public HashType? DefaultHashType { get; set; }
+
+        public StateType State
         {
-            var entries = checksumFileEntries.ToArray();
-            this.EntriesCount = entries.Length;
-            this.EntriesProcessed = 0;
-
-            var results = new List<EntryResult>();
-            foreach (var entry in entries)
+            get
             {
-                var validator = new FileHashCalculator { HashAlgorithm = CryptoUtils.ToHashAlgorithm(entry.ChecksumType) };
-                validator.ChunkProcessed += this.OnChunkProcessed;
-
-                bool valid = ConvertUtils.ByteArraysEqual(
-                    validator.CalculateFileHash(Path.Combine(this.BaseDir, entry.Path)),
-                    ConvertUtils.ToBytes(entry.Path));
-
-                validator.ChunkProcessed -= this.OnChunkProcessed;
-                var entryResult = new EntryResult(entry.Hash, entry.Path, entry.ChecksumType, valid);
-                results.Add(entryResult);
-
-                this.EntriesProcessed++;
-                this.OnEntryProcessed(this.EntriesProcessed, this.EntriesCount);
+                return this.state;
             }
         }
 
-        protected virtual void OnEntryProcessed(int entriesProcessed, int entriesCount)
+        public void HashChecker()
         {
-            if (this.FileProcessed != null)
+            this.state = StateType.Initial;
+        }
+
+        public IEnumerable<EntryCheckResult> ValidateEntries(IEnumerable<ChecksumFileEntry> checksumFileEntries, string defaultHashAlgorithm)
+        {
+            try
             {
-                this.FileProcessed(entriesProcessed, entriesCount);
+                this.state = StateType.InProgress;
+                var entries = checksumFileEntries.ToArray();
+                this.entriesCount = entries.Length;
+                this.entriesProcessed = 0;
+
+                var results = new List<EntryCheckResult>();
+                foreach (var entry in entries)
+                {
+                    if (this.shouldStop)
+                    {
+                        break;
+                    }
+
+                    this.StartProcessingEntry(entry);
+                    this.entryCalculator = new FileHashCalculator();
+                                               
+                    if (entry.HashType != null)
+                    {
+                        this.entryCalculator.HashAlgorithm = CryptoUtils.ToHashAlgorithm(entry.HashType);
+                    }
+                    else if (entry.HashType == null && this.DefaultHashType != null)
+                    {
+                        this.entryCalculator.HashAlgorithm = CryptoUtils.ToHashAlgorithm(this.DefaultHashType.Value);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Property 'DefaultHashType' must be set if individual entry hash type is undefined");
+                    }
+                    
+                    this.entryCalculator.ChunkProcessed += this.OnEntryChunkProcessed;
+
+                    string fullEntryPath;
+                    if (Path.IsPathRooted(entry.Path))
+                    {
+                        fullEntryPath = entry.Path;
+                    }
+                    else
+                    {
+                        if (!Directory.Exists(this.BaseDir))
+                        {
+                            throw new InvalidOperationException("Property BaseDir is required, but directory not found");
+                        }
+
+                        fullEntryPath = Path.Combine(this.BaseDir, entry.Path);
+                    }
+
+                    EntryResultType entryResultType;
+                    if (!File.Exists(fullEntryPath))
+                    {
+                        entryResultType = EntryResultType.NotFound;
+                        this.notFoundCount++;
+                    }
+                    else
+                    {
+                        var calculatedHash = this.entryCalculator.CalculateFileHash(fullEntryPath);
+
+                        if (this.entryCalculator.HashCalculated)
+                        {
+                            bool valid = ConvertUtils.ByteArraysEqual(calculatedHash, ConvertUtils.ToBytes(entry.Hash));
+                            entryResultType = valid ? EntryResultType.Correct : EntryResultType.Wrong;
+                            if (valid)
+                            {
+                                this.validCount++;
+                            }
+                            else
+                            {
+                                this.wrongCount++;
+                            }
+                        }
+                        else
+                        {
+                            entryResultType = EntryResultType.Aborted;
+                        }
+                    }
+
+                    var entryResult = new EntryCheckResult(entry.Hash, entry.Path, entry.HashType, entryResultType);
+                    results.Add(entryResult);
+
+                    this.entriesProcessed++;
+                    this.OnEntryProcessed(entryResult);
+
+                    // Free
+                    this.entryCalculator.ChunkProcessed -= this.OnEntryChunkProcessed;
+                    this.entryCalculator = null;
+                }
+
+                return results;
+            }
+            finally
+            {
+                this.state = StateType.Finished;
+                this.OnFinished();
             }
         }
 
-        protected virtual void OnChunkProcessed(long bytesProcessed, long fileSize)
+        public void RequestStop()
         {
-            if (this.ChunkProcessed != null)
+            this.shouldStop = true;
+            if (this.entryCalculator != null)
             {
-                this.ChunkProcessed(bytesProcessed, fileSize);
+                this.entryCalculator.RequestStop();
             }
         }
 
-        public struct EntryResult
+        protected virtual void OnStartProcessingEntry(ChecksumFileEntry entry)
         {
-            public EntryResult(string hash, string path, string type, bool valid)
-                : this()
+            if (this.StartProcessingEntry != null)
             {
-                this.Hash = hash;
-                this.Path = path;
-                this.ChecksumType = type;
-                this.Valid = valid;
+                this.StartProcessingEntry(entry);
             }
+        }
 
-            public string Hash { get; private set; }
+        protected virtual void OnEntryProcessed(EntryCheckResult checkResult)
+        {
+            if (this.EntryProcessed != null)
+            {
+                this.EntryProcessed(checkResult, this.entriesProcessed, this.entriesCount);
+            }
+        }
 
-            public string Path { get; private set; }
+        protected virtual void OnEntryChunkProcessed(long bytesProcessed, long fileSize)
+        {
+            if (this.EntryChunkProcessed != null)
+            {
+                this.EntryChunkProcessed(bytesProcessed, fileSize);
+            }
+        }
 
-            public string ChecksumType { get; private set; }
-
-            public bool Valid { get; private set; }
+        protected virtual void OnFinished()
+        {
+            if (this.Finished != null)
+            {
+                this.Finished();
+            }
         }
     }
 }

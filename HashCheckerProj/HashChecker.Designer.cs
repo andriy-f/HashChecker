@@ -34,19 +34,23 @@
             this.tbChSumFile = new System.Windows.Forms.TextBox();
             this.tbDir = new System.Windows.Forms.TextBox();
             this.bQCheck = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelChecksumFile = new System.Windows.Forms.Label();
+            this.labelRootDIrectory = new System.Windows.Forms.Label();
             this.bBrowseFile = new System.Windows.Forms.Button();
             this.bBrowseDir = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbLogShow = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.cbPriority = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.labelThresPriority = new System.Windows.Forms.Label();
             this.bOptions = new System.Windows.Forms.Button();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.bHelp = new System.Windows.Forms.Button();
             this.bAbout = new System.Windows.Forms.Button();
+            this.labelTotalProgress = new System.Windows.Forms.Label();
+            this.labelEntryProgress = new System.Windows.Forms.Label();
+            this.progressTotal = new System.Windows.Forms.ProgressBar();
+            this.progressEntry = new System.Windows.Forms.ProgressBar();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -112,23 +116,23 @@
             this.bQCheck.UseVisualStyleBackColor = true;
             this.bQCheck.Click += new System.EventHandler(this.bQCheck_Click);
             // 
-            // label1
+            // labelChecksumFile
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 37);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(26, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "File:";
+            this.labelChecksumFile.AutoSize = true;
+            this.labelChecksumFile.Location = new System.Drawing.Point(3, 37);
+            this.labelChecksumFile.Name = "labelChecksumFile";
+            this.labelChecksumFile.Size = new System.Drawing.Size(26, 13);
+            this.labelChecksumFile.TabIndex = 7;
+            this.labelChecksumFile.Text = "File:";
             // 
-            // label2
+            // labelRootDIrectory
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 63);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(23, 13);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Dir:";
+            this.labelRootDIrectory.AutoSize = true;
+            this.labelRootDIrectory.Location = new System.Drawing.Point(3, 63);
+            this.labelRootDIrectory.Name = "labelRootDIrectory";
+            this.labelRootDIrectory.Size = new System.Drawing.Size(23, 13);
+            this.labelRootDIrectory.TabIndex = 8;
+            this.labelRootDIrectory.Text = "Dir:";
             // 
             // bBrowseFile
             // 
@@ -159,14 +163,14 @@
             this.panel1.Controls.Add(this.cbLogShow);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.cbPriority);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.labelThresPriority);
             this.panel1.Controls.Add(this.bQCheck);
             this.panel1.Controls.Add(this.bChFile);
             this.panel1.Controls.Add(this.bBrowseDir);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.labelChecksumFile);
             this.panel1.Controls.Add(this.bBrowseFile);
             this.panel1.Controls.Add(this.tbChSumFile);
-            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.labelRootDIrectory);
             this.panel1.Controls.Add(this.tbDir);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -206,19 +210,19 @@
             "Normal",
             "Below Normal",
             "Lowest"});
-            this.cbPriority.Location = new System.Drawing.Point(368, 96);
+            this.cbPriority.Location = new System.Drawing.Point(379, 96);
             this.cbPriority.Name = "cbPriority";
             this.cbPriority.Size = new System.Drawing.Size(121, 21);
             this.cbPriority.TabIndex = 16;
             // 
-            // label3
+            // labelThresPriority
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(285, 99);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(77, 13);
-            this.label3.TabIndex = 15;
-            this.label3.Text = "Thread priority:";
+            this.labelThresPriority.AutoSize = true;
+            this.labelThresPriority.Location = new System.Drawing.Point(296, 99);
+            this.labelThresPriority.Name = "labelThresPriority";
+            this.labelThresPriority.Size = new System.Drawing.Size(77, 13);
+            this.labelThresPriority.TabIndex = 15;
+            this.labelThresPriority.Text = "Thread priority:";
             // 
             // bOptions
             // 
@@ -240,7 +244,7 @@
             this.rtbLog.Location = new System.Drawing.Point(0, 134);
             this.rtbLog.Name = "rtbLog";
             this.rtbLog.ReadOnly = true;
-            this.rtbLog.Size = new System.Drawing.Size(505, 320);
+            this.rtbLog.Size = new System.Drawing.Size(505, 277);
             this.rtbLog.TabIndex = 13;
             this.rtbLog.Text = "";
             // 
@@ -264,11 +268,47 @@
             this.bAbout.UseVisualStyleBackColor = true;
             this.bAbout.Click += new System.EventHandler(this.bAbout_Click);
             // 
+            // labelTotalProgress
+            // 
+            this.labelTotalProgress.AutoSize = true;
+            this.labelTotalProgress.Location = new System.Drawing.Point(3, 414);
+            this.labelTotalProgress.Name = "labelTotalProgress";
+            this.labelTotalProgress.Size = new System.Drawing.Size(77, 13);
+            this.labelTotalProgress.TabIndex = 16;
+            this.labelTotalProgress.Text = "Total progress:";
+            // 
+            // labelEntryProgress
+            // 
+            this.labelEntryProgress.AutoSize = true;
+            this.labelEntryProgress.Location = new System.Drawing.Point(4, 435);
+            this.labelEntryProgress.Name = "labelEntryProgress";
+            this.labelEntryProgress.Size = new System.Drawing.Size(70, 13);
+            this.labelEntryProgress.TabIndex = 17;
+            this.labelEntryProgress.Text = "Current entry:";
+            // 
+            // progressTotal
+            // 
+            this.progressTotal.Location = new System.Drawing.Point(83, 417);
+            this.progressTotal.Name = "progressTotal";
+            this.progressTotal.Size = new System.Drawing.Size(417, 12);
+            this.progressTotal.TabIndex = 18;
+            // 
+            // progressEntry
+            // 
+            this.progressEntry.Location = new System.Drawing.Point(83, 436);
+            this.progressEntry.Name = "progressEntry";
+            this.progressEntry.Size = new System.Drawing.Size(417, 12);
+            this.progressEntry.TabIndex = 19;
+            // 
             // HashChecker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(505, 495);
+            this.Controls.Add(this.progressEntry);
+            this.Controls.Add(this.progressTotal);
+            this.Controls.Add(this.labelEntryProgress);
+            this.Controls.Add(this.labelTotalProgress);
             this.Controls.Add(this.bAbout);
             this.Controls.Add(this.bHelp);
             this.Controls.Add(this.rtbLog);
@@ -284,6 +324,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -295,12 +336,12 @@
         private System.Windows.Forms.TextBox tbChSumFile;
         private System.Windows.Forms.TextBox tbDir;
         private System.Windows.Forms.Button bQCheck;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelChecksumFile;
+        private System.Windows.Forms.Label labelRootDIrectory;
         private System.Windows.Forms.Button bBrowseFile;
         private System.Windows.Forms.Button bBrowseDir;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelThresPriority;
         private System.Windows.Forms.ComboBox cbPriority;
         private System.Windows.Forms.ComboBox cbLogShow;
         private System.Windows.Forms.Label label4;
@@ -308,5 +349,9 @@
         private System.Windows.Forms.RichTextBox rtbLog;
         private System.Windows.Forms.Button bHelp;
         private System.Windows.Forms.Button bAbout;
+        private System.Windows.Forms.Label labelTotalProgress;
+        private System.Windows.Forms.Label labelEntryProgress;
+        private System.Windows.Forms.ProgressBar progressTotal;
+        private System.Windows.Forms.ProgressBar progressEntry;
     }
 }

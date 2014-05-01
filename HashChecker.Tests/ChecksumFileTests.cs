@@ -66,7 +66,7 @@
                                        {
                                            Hash = "5738077ABBE757E9D2DA3741115074B6",
                                            Path = "file01.bin",
-                                           ChecksumType = "MD5"
+                                           HashType = "MD5"
                                        }
                                };
 

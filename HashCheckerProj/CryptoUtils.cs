@@ -24,8 +24,34 @@
             return HashTypesSet.Contains(typeName.ToLowerInvariant());
         }
 
+        public static HashAlgorithm ToHashAlgorithm(HashType hashType)
+        {
+            switch (hashType)
+            {
+                case HashType.Crc32:
+                    return new CRC32();
+                case HashType.Md5:
+                    return MD5.Create();
+                case HashType.Sha1:
+                    return new SHA1Managed();
+                case HashType.Sha256:
+                    return new SHA256Managed();
+                case HashType.Sha384:
+                    return new SHA384Managed();
+                case HashType.Sha512:
+                    return new SHA512Managed();
+                default:
+                    throw new ArgumentException(@"Unsupported algorithm type", "hashType");
+            }
+        }
+
         public static HashAlgorithm ToHashAlgorithm(string hashType)
         {
+            if (hashType == null)
+            {
+                throw new ArgumentNullException("hashType");
+            }
+
             HashAlgorithm algorithm;
             switch (hashType.ToLowerInvariant())
             {
@@ -139,24 +165,30 @@
             }
         }
 
-        public static HashAlgorithm ToHashAlgorithm(HashType hashType)
+        /// <summary>
+        /// Infer HashType from file extension
+        /// </summary>
+        /// <param name="fileExt">Checksum file extension</param>
+        /// <returns>null if was unable to infer HashType </returns>
+        public static HashType? InferHashTypeFromExtension(string fileExt)
         {
-            switch (hashType)
+            switch (fileExt.ToLowerInvariant())
             {
-                case HashType.Crc32:
-                    return new CRC32();
-                case HashType.Md5:
-                    return MD5.Create();
-                case HashType.Sha1:
-                    return new SHA1Managed();
-                case HashType.Sha256:
-                    return new SHA256Managed();
-                case HashType.Sha384:
-                    return new SHA384Managed();
-                case HashType.Sha512:
-                    return new SHA512Managed();
+                case "sfv": // sfv - CRC32                        
+                    return HashType.Crc32;
+                case "md5": // md5
+                    return HashType.Md5;
+                case "sha":
+                case "sha1": // sha or sha1
+                     return HashType.Sha1;
+                case "sha256": // sha256                        
+                    return HashType.Sha256;
+                case "sha384": // sha384
+                    return HashType.Sha384;
+                case "sha512": // sha512
+                    return HashType.Sha512;
                 default:
-                    throw new ArgumentException(@"Unsupported algorithm type", "hashType");
+                    return null;
             }
         }
     }

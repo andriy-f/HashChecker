@@ -213,8 +213,7 @@
         {
             if (this.InvokeRequired)
             {
-                Action closeAction = this.CloseThreadSafe;
-                this.Invoke(closeAction);
+                this.Invoke((Action)this.CloseThreadSafe);
             }
             else
             {

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Drawing;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading;
@@ -16,13 +17,15 @@
         // locals
         private readonly string cmdlineFName;
 
-        private volatile bool exitAttempt;
+        private const string ChecksumFileFilter = @"All Supported|*.sfv;*.md5;*.sha;*.sha1;*.sha256;*.sha384;*.sha512|sfv|*.sfv|md5|*.md5|sha1|*.sha;*.sha1|sha256|*.sha256|sha384|*.sha384|sha512|*.sha512|All(*.*)|*.*";
 
-        private Thread myThread;
+        private volatile HashValidator hashValidator;
+
+        private Thread checkingThread;
 
         private int checkboxLogShowSelIndex = 1;
 
-        private int filesProcessed, totalNumOfFilesToProcess;
+        private int filesProcessed, entriesCount;
 
         #endregion
 
@@ -76,33 +79,33 @@
 
         #region Cross Thread related
 
-        private void RtbLogAppendText(string text)
+        private void LogThreadSafe(string text)
         {
             if (this.rtbLog.InvokeRequired)
             {
-                TextBoxAppendText d = this.RtbLogAppendText;
+                TextBoxAppendText d = this.LogThreadSafe;
                 this.Invoke(d, new object[] { text, Color.Black });
             }
             else
             {
-                this.AppendText(this.rtbLog, Color.Black, text);
+                AppendText(this.rtbLog, Color.Black, text);
             }
         }
 
-        private void RtbLogAppendText(string text, Color color)
+        private void LogThreadSafe(string text, Color color)
         {
             if (this.rtbLog.InvokeRequired)
             {
-                TextBoxAppendText d = this.RtbLogAppendText;
+                TextBoxAppendText d = this.LogThreadSafe;
                 this.Invoke(d, new object[] { text, color });
             }
             else
             {
-                this.AppendText(this.rtbLog, color, text);
+                AppendText(this.rtbLog, color, text);
             }
         }
         
-        private void AppendText(RichTextBox box, Color color, string text)
+        private static void AppendText(RichTextBox box, Color color, string text)
         {
             int start = box.TextLength;
             box.AppendText(text);
@@ -155,14 +158,14 @@
         {
             if (this.InvokeRequired)
             {
-                this.Invoke((Action<long, long>)this.DisplayProgressThreadSafe, new object[] { bytesProcessed, totalBytesProcessed });
+                this.Invoke((Action<long, long>)this.DisplayProgressThreadSafe, bytesProcessed, totalBytesProcessed);
             }
             else
             {
                 this.Text = string.Format(
                     "Hash Checker (Progress: {0}/{1} files, {2}/{3} bytes of current file)", 
                     this.filesProcessed, 
-                    this.totalNumOfFilesToProcess,
+                    this.entriesCount,
                     bytesProcessed,
                     totalBytesProcessed);
             }
@@ -172,33 +175,106 @@
         {
             if (this.InvokeRequired)
             {
-                this.Invoke((Action)this.ProgressStep, null);
+                this.Invoke((Action)this.ProgressStep);
             }
             else
             {
-                this.Text = string.Format("Hash Checker ({0}/{1} entries processed)", ++this.filesProcessed, this.totalNumOfFilesToProcess);
+                this.Text = string.Format("Hash Checker ({0}/{1} entries processed)", ++this.filesProcessed, this.entriesCount);
             }
         }
 
-        private void InitProgress()
+        private void InitProgressSafe()
         {
             if (this.InvokeRequired)
             {
-                this.Invoke((Action)this.InitProgress, null);
+                this.Invoke((Action)this.InitProgressSafe);
             }
             else
             {
                 this.filesProcessed = 0;
-                this.Text = string.Format("Hash Checker ({0}/{1} entries processed)", 0, this.totalNumOfFilesToProcess);
+                this.ShowTotalProgressSafe(0, 1);
+                this.ShowEntryProcessedProgressSafe(0, 1);
+                this.Text = string.Format("Hash Checker ({0}/{1} entries processed)", 0, this.entriesCount);
             }
         }
 
         #endregion
 
-        private void CallMyThread()
+        private void StartValidatingAsync()
         {
-            this.myThread = new Thread(this.PerformCheck) { Priority = this.SelectedThreadPriority, IsBackground = true };
-            this.myThread.Start();
+            var checksumFile = new ChecksumFile(this.tbChSumFile.Text);
+            var entries = checksumFile.Parse().ToArray();
+            this.entriesCount = entries.Count();
+            this.InitProgressSafe();
+
+            this.hashValidator = new HashValidator();
+            this.hashValidator.BaseDir = this.tbDir.Text;
+            this.hashValidator.DefaultHashType = CryptoUtils.InferHashTypeFromExtension(checksumFile.Ext);
+            this.hashValidator.StartProcessingEntry += entry => this.LogThreadSafe(entry.Path + "... ");
+            this.hashValidator.EntryProcessed += (result, processed, count) =>
+                {
+                    this.ShowTotalProgressSafe(processed, count);
+
+                    Color color;
+                    switch (result.ResultType)
+                    {
+                        case EntryResultType.Wrong:
+                        case EntryResultType.Aborted:
+                            color = Color.Red;
+                            break;
+                        case EntryResultType.NotFound:
+                            color = Color.BlueViolet;
+                            break;
+                        default:
+                            color = Color.Black;
+                            break;
+                    }
+
+                    this.LogThreadSafe(result.ResultType.ToString() + Environment.NewLine, color);
+                };
+            this.hashValidator.EntryChunkProcessed += this.ShowEntryProcessedProgressSafe;
+
+            this.checkingThread = new Thread(
+                () =>
+                    {
+                        try
+                        {
+                            this.hashValidator.ValidateEntries(entries, checksumFile.Ext);
+
+                            // Display final message
+                            var endMessage = string.Format(
+                                "{0}Correct: {1}, Wrong: {2}, Not Found: {3}, Total: {4}",
+                                Environment.NewLine,
+                                this.hashValidator.ValidCount,
+                                this.hashValidator.WrongCount,
+                                this.hashValidator.NotFoundCount,
+                                this.hashValidator.EntriesCount);
+
+                            Color color;
+                            if (this.hashValidator.WrongCount > 0)
+                            {
+                                color = Color.Red;
+                            } 
+                            else if (this.hashValidator.NotFoundCount > 0)
+                            {
+                                color = Color.BlueViolet;
+                            }
+                            else
+                            {
+                                color = Color.Black;
+                            }
+
+                            this.LogThreadSafe(endMessage, color);
+                            this.SetFormToNormal();
+                        }
+                        catch (Exception ex)
+                        {
+                            this.ShowErrorThreadSafe(ex);
+                        }
+                    });
+            this.checkingThread.Priority = this.SelectedThreadPriority;
+            this.checkingThread.IsBackground = true;
+            this.checkingThread.Start();
         }
 
         private ThreadPriority SelectedThreadPriority
@@ -223,106 +299,6 @@
             }
         }
 
-        /// <summary>
-        /// Method for calling inside new thread
-        /// </summary>
-        private void PerformCheck()
-        {
-            try
-            {
-                var checksumFile = new ChecksumFile(this.tbChSumFile.Text);
-                var entries = checksumFile.Parse().ToArray();
-                this.totalNumOfFilesToProcess = entries.Count();
-                this.InitProgress();
-                
-                var hchRes = new HashCheckRes(); 
-
-                foreach (var entry in entries)
-                {
-                    string hashType = entry.ChecksumType ?? checksumFile.Ext;
-                    var result = this.ValidateHashAndLog(entry.Path, hashType, entry.Hash);
-                    hchRes.Append(result);
-                    this.ProgressStep();
-                }
-
-                // Display message
-                var message = string.Format(
-                    "{0}Correct: {1}, Wrong: {2}, Not Found: {3}, Total: {4}",
-                    Environment.NewLine,
-                    hchRes.Correct,
-                    hchRes.Wrong,
-                    hchRes.NotFound,
-                    hchRes.GetSum());
-                var color = hchRes.Wrong == 0 ? (hchRes.NotFound == 0 ? Color.Black : Color.BlueViolet) : Color.Red;
-                this.RtbLogAppendText(message, color);
-            }
-            catch (ThreadAbortException)
-            {
-                if (this.exitAttempt)
-                {
-                    return;
-                }
-
-                this.RtbLogAppendText("Check Aborted", Color.Red);
-                ////MessageBox.Show(String.Format("{0}", ex));
-            }
-            catch (Exception)
-            {
-                 CustomMessageBoxes.Error("Error while performing check: Probably invalid file format");   
-            }
-            finally
-            {
-                if (!this.exitAttempt)
-                {
-                    this.SetFormToNormal();                    
-                }
-            }
-        }
-
-        /// <summary>
-        /// Validate entry in checksum file
-        /// </summary>
-        /// <param name="entry">Path to file which will be validated</param>
-        /// <param name="hashtype">Type of hash</param>
-        /// <param name="hash">Hex string</param>
-        /// <returns></returns>
-        private EntryProcessingResult ValidateHashAndLog(string entry, string hashtype, string hash)
-        {
-            string fname = entry;
-            if (File.Exists(fname) || File.Exists(fname = this.tbDir.Text + "\\" + fname))
-            {
-                var fi = new FileInfo(fname);
-                switch (this.checkboxLogShowSelIndex)
-                {
-                    case 0: this.RtbLogAppendText(entry + "... "); 
-                        break;
-                    case 1: this.RtbLogAppendText(fi.FullName + "... "); 
-                        break;
-                    case 2: this.RtbLogAppendText(fi.Name + "... "); 
-                        break;
-                }
-
-                bool correct = this.ValidateFileHash(fname, hashtype, hash);
-                this.RtbLogAppendText((correct ? "OK" : "WRONG!") + Environment.NewLine, correct ? Color.Black : Color.Red);
-                return correct ? EntryProcessingResult.Correct : EntryProcessingResult.Wrong;
-            }
-            else
-            {
-                this.RtbLogAppendText(entry + "... Not Found" + Environment.NewLine, Color.BlueViolet);
-                return EntryProcessingResult.NotFound;
-            }
-        }
-
-        private bool ValidateFileHash(string fname, string hashtype, string hash)
-        {
-            var validator = new FileHashCalculator { HashAlgorithm = CryptoUtils.ToHashAlgorithm(hashtype) };
-            validator.ChunkProcessed += this.DisplayProgressThreadSafe;
-
-            return ConvertUtils.ByteArraysEqual(
-                validator.CalculateFileHash(fname),
-                ConvertUtils.ToBytes(hash));
-        }
-
         #endregion
 
         #region Form Methods
@@ -332,14 +308,14 @@
             if (this.cmdlineFName != null)
             {
                 // Parse hashFile(cmdlineFName) and verify hashes
-                if (File.Exists(cmdlineFName))
+                if (File.Exists(this.cmdlineFName))
                 {
                     this.tbChSumFile.Text = this.cmdlineFName;
                     this.tbDir.Text = Utils.GetFileDirectory(this.cmdlineFName);
                     this.panel1.Enabled = false;
                     this.bStop.Enabled = true;
                     this.rtbLog.Clear();
-                    this.CallMyThread();
+                    this.StartValidatingAsync();
                 }
                 else
                 {
@@ -350,8 +326,7 @@
 
         private void bQCheck_Click(object sender, EventArgs e)
         {
-            var openFileDlg1 = new OpenFileDialog();
-            openFileDlg1.Filter = @"All Supported|*.sfv;*.md5;*.sha;*.sha1;*.sha256;*.sha384;*.sha512|sfv|*.sfv|md5|*.md5|sha1|*.sha;*.sha1|sha256|*.sha256|sha384|*.sha384|sha512|*.sha512|All(*.*)|*.*";
+            var openFileDlg1 = new OpenFileDialog { Filter = ChecksumFileFilter };
             if ((openFileDlg1.ShowDialog() == DialogResult.OK) && File.Exists(openFileDlg1.FileName))
             {
                 this.tbChSumFile.Text = openFileDlg1.FileName;
@@ -360,14 +335,13 @@
                 this.panel1.Enabled = false;
                 this.bStop.Enabled = true;
                 this.rtbLog.Clear();
-                this.CallMyThread();
+                this.StartValidatingAsync();
             }
         }        
 
         private void bBrowseFile_Click(object sender, EventArgs e)
         {
-            var openFileDlg1 = new OpenFileDialog();
-            openFileDlg1.Filter = @"All Supported|*.md5;*.sha;*.sha1;*.sha256;*.sha384;*.sha512|md5|*.md5|sha1|*.sha;*.sha1|sha256|*.sha256|sha384|*.sha384|sha512|*.sha512|All(*.*)|*.*";
+            var openFileDlg1 = new OpenFileDialog { Filter = ChecksumFileFilter };
             if ((openFileDlg1.ShowDialog() == DialogResult.OK) && File.Exists(openFileDlg1.FileName))
             {
                 this.tbChSumFile.Text = openFileDlg1.FileName;
@@ -376,7 +350,7 @@
         }
 
         private void bBrowseDir_Click(object sender, EventArgs e)
-        {            
+        {
             var fdbd1 = new FolderBrowserDialog();
             fdbd1.ShowNewFolderButton = false;
             if (fdbd1.ShowDialog() == DialogResult.OK)
@@ -393,16 +367,15 @@
                 this.panel1.Enabled = false;
                 this.bStop.Enabled = true;
                 this.rtbLog.Clear();
-                this.CallMyThread();
+                this.StartValidatingAsync();
             }
         }        
 
         private void bStop_Click(object sender, EventArgs e)
         {
-            if (this.myThread != null)
+            if (this.hashValidator != null)
             {
-                this.myThread.Abort();
-                this.myThread = null;
+                this.hashValidator.RequestStop();
             }
         }
         
@@ -413,19 +386,32 @@
 
         private void HashChecker_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.exitAttempt = true;
-            if (this.myThread != null)
+            if (this.hashValidator != null && this.hashValidator.State == HashValidator.StateType.InProgress)
             {
-                this.myThread.Abort();
-                this.myThread = null;
-            }            
+                this.hashValidator.RequestStop();
+                e.Cancel = true;
+                this.hashValidator.Finished += this.CloseThreadSafe;
+            }
+        }
+
+        private void CloseThreadSafe()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((Action)this.CloseThreadSafe);
+            }
+            else
+            {
+                this.Close();
+            }
         }
 
         private void HashChecker_FormClosed(object sender, FormClosedEventArgs e)
         {
             try
             {
-                Settings.Default.ThreadPriority = cbPriority.SelectedIndex;
+                // TODO: move to options
+                Settings.Default.ThreadPriority = this.cbPriority.SelectedIndex;
                 Settings.Default.LogShow = this.cbLogShow.SelectedIndex;
                 Settings.Default.Save();
             }
@@ -454,64 +440,41 @@
         }
 
         #endregion
-        
-        public struct Comp2ClipHashParams
+
+        private void ShowTotalProgressSafe(int processed, int total)
         {
-            public string Filename { get; set; }
-
-            public string Hash { get; set; }
-
-            public int Hashtype { get; set; }
+            if (this.progressTotal.InvokeRequired)
+            {
+                this.Invoke((Action<int, int>)this.ShowTotalProgressSafe, processed, total);
+            }
+            else
+            {
+                this.progressTotal.Value = (processed * 100) / total;
+            }
         }
 
-        public class HashCheckRes
+        private void ShowEntryProcessedProgressSafe(long bytesProcessed, long fileSize)
         {
-            public HashCheckRes()
+            if (this.progressEntry.InvokeRequired)
             {
-                this.Correct = 0; 
-                this.Wrong = 0; 
-                this.NotFound = 0;
+                this.Invoke((Action<long, long>)this.ShowEntryProcessedProgressSafe, bytesProcessed, fileSize);
             }
-
-            public HashCheckRes(int correct, int wrong, int notFound)
+            else
             {
-                this.Correct = correct;
-                this.Wrong = wrong;
-                this.NotFound = notFound;
+                this.progressEntry.Value = (int)((bytesProcessed * 100) / fileSize);
             }
+        }
 
-            public int Correct { get; private set; }
-
-            public int Wrong { get; private set; }
-
-            public int NotFound { get; private set; }
-
-            public void Append(EntryProcessingResult res)
+        private void ShowErrorThreadSafe(Exception ex)
+        {
+            if (this.InvokeRequired)
             {
-                switch (res)
-                {
-                    case EntryProcessingResult.NotFound:
-                        this.NotFound++;
-                        break;
-                    case EntryProcessingResult.Wrong:
-                        this.Wrong++;
-                        break;
-                    case EntryProcessingResult.Correct:
-                        this.Correct++;
-                        break;
-                }
+                Action<Exception> a = this.ShowErrorThreadSafe;
+                this.Invoke(a, ex);
             }
-
-            public void Append(HashCheckRes other)
+            else
             {
-                this.Correct += other.Correct;
-                this.Wrong += other.Wrong;
-                this.NotFound += other.NotFound;
-            }
-
-            public int GetSum()
-            {
-                return this.Correct + this.Wrong + this.NotFound;
+                CustomMessageBoxes.Error(ex.Message);
             }
         }
 

@@ -50,6 +50,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\ComplexCorrectWrongNotFound.md5">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\file02.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\file01-v2.md5">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
