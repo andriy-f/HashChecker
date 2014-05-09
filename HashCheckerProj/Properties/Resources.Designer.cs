@@ -61,6 +61,19 @@ namespace HashCheckerProj.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command line arguments:
+        ///no arguments : Standatd interface
+        ///&lt;path to exe&gt; &lt;filepath&gt; : validate entries in &lt;filepath&gt; checksum file;
+        ///&lt;path to exe&gt; -comp2clipboard &lt;filepath&gt; : chack if file &lt;filepath&gt; has hash equal to hash in clipboard
+        ///&lt;path to exe&gt; /h : show this help.
+        /// </summary>
+        internal static string CommandLineArgumentsHelp {
+            get {
+                return ResourceManager.GetString("CommandLineArgumentsHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Must not be bigger than fileSize.
         /// </summary>
         internal static string HashChecker_Must_not_be_bigger_than_fileSize {

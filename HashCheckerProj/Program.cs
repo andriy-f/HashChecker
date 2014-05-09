@@ -1,8 +1,10 @@
 ﻿namespace HashCheckerProj
 {
     using System;
-    using System.Linq;
+    using System.IO;
     using System.Windows.Forms;
+
+    using HashCheckerProj.Properties;
 
     public static class Program
     {
@@ -14,6 +16,9 @@
         {
             try
             {
+                AppDomain.CurrentDomain.UnhandledException += (sender, e) => HandleException(e.ExceptionObject as Exception);
+                Application.ThreadException += (sender, e) => HandleException(e.Exception);
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
@@ -25,15 +30,15 @@
                     case 1:
                         if (args[0] == "/h" || args[0] == "-h")
                         {
-                            CustomMessageBoxes.Info(@"
-Command line arguments:
-no arguments : Standatd interface
-<path to exe> <filepath> : validate entries in <filepath> checksum file;
-<path to exe> -comp2clipboard <filepath> : chack if file <filepath> has hash equal to hash in clipboard
-<path to exe> /h : show this help");
+                            CustomMessageBoxes.Info(Resources.CommandLineArgumentsHelp);
                         }
                         else
                         {
+                            if (!File.Exists(args[0]))
+                            {
+                                throw new Exception("First command line argument provided should be valid checksum file path");
+                            }
+
                             Application.Run(new HashChecker(ProgramMode.ValidateChecksumFile, args[0]));
                         }
 
@@ -61,6 +66,11 @@ no arguments : Standatd interface
                 throw;
 #endif
             }
+        }
+
+        public static void HandleException(Exception ex)
+        {
+            CustomMessageBoxes.Error(ex.Message);
         }
     }
 }

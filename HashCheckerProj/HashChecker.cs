@@ -2,7 +2,6 @@
 {
     using System;
     using System.Drawing;
-    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading;
@@ -21,9 +20,9 @@
 
         private volatile HashValidator hashValidator;
 
-        private Thread checkingThread;
+        private volatile bool exiting;
 
-        private int filesProcessed, entriesCount;
+        private Thread checkingThread;
 
         #endregion
 
@@ -63,99 +62,55 @@
 
         #endregion
 
-        private delegate void TextBoxAppendText(string text, Color color);
-
         #region Methods
 
         #region Cross Thread related
 
         private void LogThreadSafe(string text)
         {
-            if (this.rtbLog.InvokeRequired)
-            {
-                TextBoxAppendText d = this.LogThreadSafe;
-                this.Invoke(d, new object[] { text, Color.Black });
-            }
-            else
-            {
-                AppendText(this.rtbLog, Color.Black, text);
-            }
+            this.LogThreadSafe(text, Color.Black);
         }
 
         private void LogThreadSafe(string text, Color color)
         {
             if (this.rtbLog.InvokeRequired)
             {
-                TextBoxAppendText d = this.LogThreadSafe;
-                this.Invoke(d, new object[] { text, color });
+                this.Invoke((Action<string, Color>)this.LogThreadSafe, text, color);
             }
             else
             {
-                AppendText(this.rtbLog, color, text);
+                WinFormsUtils.AppendText(this.rtbLog, color, text);
             }
         }
-        
-        private static void AppendText(RichTextBox box, Color color, string text)
+
+        private void SetToInitialStateThreadSafe()
         {
-            int start = box.TextLength;
-            box.AppendText(text);
-            int end = box.TextLength;
-
-            // Textbox may transform chars, so (end-start) != text.Length
-            box.Select(start, end - start);
+            if (this.InvokeRequired)
             {
-                box.SelectionColor = color;
-                //// Could set box.SelectionBackColor, box.SelectionFont too.
-            }
-
-            box.SelectionLength = 0; // clear
-        }
-
-        private void SetFormToNormal()
-        {
-            if (this.panelSetUp.InvokeRequired)
-            {
-                Action d = () => this.panelSetUp.Enabled = true;
-                this.Invoke(d, null);
+                this.Invoke((Action)this.SetToInitialStateThreadSafe);
             }
             else
             {
                 this.panelSetUp.Enabled = true;
-            }
-
-            if (this.bStop.InvokeRequired)
-            {
-                Action d = delegate { this.bStop.Enabled = false; };
-                this.Invoke(d, null);
-            }
-            else
-            {
                 this.bStop.Enabled = false;
-            }
-
-            if (this.InvokeRequired)
-            {
-                Action d = delegate { this.Text = Resources.HashChecker_setFormToNormal_Hash_Checker; };
-                this.Invoke(d, null);
-            }
-            else
-            {
                 this.Text = Resources.HashChecker_setFormToNormal_Hash_Checker;
             }
         }
 
-        private void InitProgressSafe()
+        private void InitProgressSafe(int entriesCount = 0)
         {
             if (this.InvokeRequired)
             {
-                this.Invoke((Action)this.InitProgressSafe);
+                this.Invoke((Action<int>)this.InitProgressSafe, entriesCount);
             }
             else
             {
-                this.filesProcessed = 0;
                 this.ShowTotalProgressSafe(0, 1);
                 this.ShowEntryProcessedProgressSafe(0, 1);
-                this.Text = string.Format("Hash Checker ({0}/{1} entries processed)", 0, this.entriesCount);
+                if (entriesCount > 0)
+                {
+                    this.Text = string.Format("Hash Checker (0/{0} entries processed)", entriesCount);
+                }
             }
         }
 
@@ -165,8 +120,7 @@
         {
             var checksumFile = new ChecksumFile(this.tbChSumFile.Text);
             var entries = checksumFile.Parse().ToArray();
-            this.entriesCount = entries.Count();
-            this.InitProgressSafe();
+            this.InitProgressSafe(entries.Count());
 
             this.hashValidator = new HashValidator();
             this.hashValidator.BaseDir = this.tbDir.Text;
@@ -193,6 +147,7 @@
 
                     this.LogThreadSafe(result.ResultType.ToString() + Environment.NewLine, color);
                 };
+
             this.hashValidator.EntryChunkProcessed += this.ShowEntryProcessedProgressSafe;
 
             this.checkingThread = new Thread(
@@ -201,6 +156,11 @@
                         try
                         {
                             this.hashValidator.ValidateEntries(entries, checksumFile.Ext);
+
+                            if (this.exiting)
+                            {
+                                return;
+                            }
 
                             // Display final message
                             var endMessage = string.Format(
@@ -226,13 +186,14 @@
                             }
 
                             this.LogThreadSafe(endMessage, color);
-                            this.SetFormToNormal();
+                            this.SetToInitialStateThreadSafe();
                         }
                         catch (Exception ex)
                         {
                             this.ShowErrorThreadSafe(ex);
                         }
                     });
+
             this.checkingThread.Priority = this.SelectedThreadPriority;
             this.checkingThread.IsBackground = true;
             this.checkingThread.Start();
@@ -322,36 +283,64 @@
 
         private void bChFile_Click(object sender, EventArgs e)
         {
-            if (File.Exists(this.tbChSumFile.Text) &&
-                (this.tbDir.Text == string.Empty || Directory.Exists(this.tbDir.Text)))
+            try
             {
+                if (!File.Exists(this.tbChSumFile.Text))
+                {
+                    CustomMessageBoxes.Error(string.Format("Checksum file '{0}' not found", this.tbChSumFile.Text));
+                }
+
+                if (!Directory.Exists(this.tbDir.Text))
+                {
+                    CustomMessageBoxes.Error(string.Format("Root directory '{0}' not found", this.tbDir.Text));
+                }
+
                 this.panelSetUp.Enabled = false;
                 this.bStop.Enabled = true;
                 this.rtbLog.Clear();
                 this.StartValidatingAsync();
             }
+            catch (Exception ex)
+            {
+                CustomMessageBoxes.Error(ex.Message);
+            }
         }        
 
         private void bStop_Click(object sender, EventArgs e)
         {
-            if (this.hashValidator != null)
+            try
             {
-                this.hashValidator.RequestStop();
+                if (this.hashValidator != null)
+                {
+                    this.hashValidator.RequestStop();
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBoxes.Error(ex.Message);
             }
         }
         
         private void bClose_Click(object sender, EventArgs e)
-        {            
-            this.Close();
+        {
+            try
+            {
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBoxes.Error(ex.Message);
+            }
         }
 
         private void HashChecker_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (this.hashValidator != null && this.hashValidator.State == HashValidator.StateType.InProgress)
             {
-                this.hashValidator.RequestStop();
                 e.Cancel = true;
+                this.exiting = true;
                 this.hashValidator.Finished += this.CloseThreadSafe;
+                this.hashValidator.RequestStop();
             }
         }
 
@@ -397,6 +386,7 @@
             else
             {
                 this.progressTotal.Value = (processed * 100) / total;
+                this.Text = string.Format("Hash Checker ({0}/{1} entries processed)", processed, total);
             }
         }
 
@@ -431,8 +421,7 @@
         {
             if (this.InvokeRequired)
             {
-                Action<Exception> a = this.ShowErrorThreadSafe;
-                this.Invoke(a, ex);
+                this.Invoke((Action<Exception>)this.ShowErrorThreadSafe, ex);
             }
             else
             {
