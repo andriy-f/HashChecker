@@ -15,15 +15,13 @@
         #region Fields Consts
         
         // locals
-        private readonly string cmdlineFName;
-
         private const string ChecksumFileFilter = @"All Supported|*.sfv;*.md5;*.sha;*.sha1;*.sha256;*.sha384;*.sha512|sfv|*.sfv|md5|*.md5|sha1|*.sha;*.sha1|sha256|*.sha256|sha384|*.sha384|sha512|*.sha512|All(*.*)|*.*";
+
+        private readonly string cmdlineFName;
 
         private volatile HashValidator hashValidator;
 
         private Thread checkingThread;
-
-        private int checkboxLogShowSelIndex = 1;
 
         private int filesProcessed, entriesCount;
 
@@ -52,13 +50,11 @@
             try
             { 
                 this.cbPriority.SelectedIndex = Settings.Default.ThreadPriority;
-                this.cbLogShow.SelectedIndex = Settings.Default.LogShow;
             }
             catch (System.Configuration.ConfigurationException)
             {
                 CustomMessageBoxes.Warning("Failed to load settings, restoring defaults");
                 this.cbPriority.SelectedIndex = 4;
-                this.cbLogShow.SelectedIndex = 0;
 #if DEBUG
                 throw;
 #endif
@@ -70,13 +66,6 @@
         private delegate void TextBoxAppendText(string text, Color color);
 
         #region Methods
-
-        public enum EntryProcessingResult
-        {
-            NotFound = -1,
-            Wrong = 0,
-            Correct = 1
-        }
 
         #region Cross Thread related
 
@@ -124,14 +113,14 @@
 
         private void SetFormToNormal()
         {
-            if (this.panel1.InvokeRequired)
+            if (this.panelSetUp.InvokeRequired)
             {
-                Action d = () => this.panel1.Enabled = true;
+                Action d = () => this.panelSetUp.Enabled = true;
                 this.Invoke(d, null);
             }
             else
             {
-                this.panel1.Enabled = true;
+                this.panelSetUp.Enabled = true;
             }
 
             if (this.bStop.InvokeRequired)
@@ -152,35 +141,6 @@
             else
             {
                 this.Text = Resources.HashChecker_setFormToNormal_Hash_Checker;
-            }
-        }
-
-        private void DisplayProgressThreadSafe(long bytesProcessed, long totalBytesProcessed)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke((Action<long, long>)this.DisplayProgressThreadSafe, bytesProcessed, totalBytesProcessed);
-            }
-            else
-            {
-                this.Text = string.Format(
-                    "Hash Checker (Progress: {0}/{1} files, {2}/{3} bytes of current file)", 
-                    this.filesProcessed, 
-                    this.entriesCount,
-                    bytesProcessed,
-                    totalBytesProcessed);
-            }
-        }
-
-        private void ProgressStep()
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke((Action)this.ProgressStep);
-            }
-            else
-            {
-                this.Text = string.Format("Hash Checker ({0}/{1} entries processed)", ++this.filesProcessed, this.entriesCount);
             }
         }
 
@@ -313,7 +273,7 @@
                 {
                     this.tbChSumFile.Text = this.cmdlineFName;
                     this.tbDir.Text = Utils.GetFileDirectory(this.cmdlineFName);
-                    this.panel1.Enabled = false;
+                    this.panelSetUp.Enabled = false;
                     this.bStop.Enabled = true;
                     this.rtbLog.Clear();
                     this.StartValidatingAsync();
@@ -333,7 +293,7 @@
                 this.tbChSumFile.Text = openFileDlg1.FileName;
                 this.tbDir.Text = Utils.GetFileDirectory(openFileDlg1.FileName);
 
-                this.panel1.Enabled = false;
+                this.panelSetUp.Enabled = false;
                 this.bStop.Enabled = true;
                 this.rtbLog.Clear();
                 this.StartValidatingAsync();
@@ -365,7 +325,7 @@
             if (File.Exists(this.tbChSumFile.Text) &&
                 (this.tbDir.Text == string.Empty || Directory.Exists(this.tbDir.Text)))
             {
-                this.panel1.Enabled = false;
+                this.panelSetUp.Enabled = false;
                 this.bStop.Enabled = true;
                 this.rtbLog.Clear();
                 this.StartValidatingAsync();
@@ -413,18 +373,12 @@
             {
                 // TODO: move to options
                 Settings.Default.ThreadPriority = this.cbPriority.SelectedIndex;
-                Settings.Default.LogShow = this.cbLogShow.SelectedIndex;
                 Settings.Default.Save();
             }
             catch (System.Configuration.ConfigurationException ex)
             {
                 CustomMessageBoxes.Error("Failed to save settings: " + ex.Message);
             }
-        }
-
-        private void cbLogShow_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            this.checkboxLogShowSelIndex = this.cbLogShow.SelectedIndex;
         }
         
         private void bOptions_Click(object sender, EventArgs e)
@@ -454,7 +408,22 @@
             }
             else
             {
-                this.progressEntry.Value = (int)((bytesProcessed * 100) / fileSize);
+                if (bytesProcessed > fileSize)
+                {
+                    throw new ArgumentException(Resources.HashChecker_Must_not_be_bigger_than_fileSize, "bytesProcessed");
+                }
+
+                int percent;
+                if (fileSize == 0 && bytesProcessed == 0)
+                {
+                    percent = 100;
+                }
+                else
+                {
+                    percent = (int)((bytesProcessed * 100) / fileSize);
+                }
+
+                this.progressEntry.Value = percent;
             }
         }
 

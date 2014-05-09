@@ -38,9 +38,7 @@
             this.labelRootDIrectory = new System.Windows.Forms.Label();
             this.bBrowseFile = new System.Windows.Forms.Button();
             this.bBrowseDir = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.cbLogShow = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.panelSetUp = new System.Windows.Forms.Panel();
             this.cbPriority = new System.Windows.Forms.ComboBox();
             this.labelThresPriority = new System.Windows.Forms.Label();
             this.bOptions = new System.Windows.Forms.Button();
@@ -50,7 +48,7 @@
             this.labelEntryProgress = new System.Windows.Forms.Label();
             this.progressTotal = new System.Windows.Forms.ProgressBar();
             this.progressEntry = new System.Windows.Forms.ProgressBar();
-            this.panel1.SuspendLayout();
+            this.panelSetUp.SuspendLayout();
             this.SuspendLayout();
             // 
             // bStop
@@ -155,49 +153,24 @@
             this.bBrowseDir.UseVisualStyleBackColor = true;
             this.bBrowseDir.Click += new System.EventHandler(this.bBrowseDir_Click);
             // 
-            // panel1
+            // panelSetUp
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panelSetUp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.cbLogShow);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.cbPriority);
-            this.panel1.Controls.Add(this.labelThresPriority);
-            this.panel1.Controls.Add(this.bQCheck);
-            this.panel1.Controls.Add(this.bChFile);
-            this.panel1.Controls.Add(this.bBrowseDir);
-            this.panel1.Controls.Add(this.labelChecksumFile);
-            this.panel1.Controls.Add(this.bBrowseFile);
-            this.panel1.Controls.Add(this.tbChSumFile);
-            this.panel1.Controls.Add(this.labelRootDIrectory);
-            this.panel1.Controls.Add(this.tbDir);
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(505, 128);
-            this.panel1.TabIndex = 11;
-            // 
-            // cbLogShow
-            // 
-            this.cbLogShow.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbLogShow.FormattingEnabled = true;
-            this.cbLogShow.Items.AddRange(new object[] {
-            "Checksum file entries",
-            "Full names",
-            "Filenames only"});
-            this.cbLogShow.Location = new System.Drawing.Point(83, 96);
-            this.cbLogShow.Name = "cbLogShow";
-            this.cbLogShow.Size = new System.Drawing.Size(129, 21);
-            this.cbLogShow.TabIndex = 18;
-            this.cbLogShow.SelectedIndexChanged += new System.EventHandler(this.cbLogShow_SelectedIndexChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 99);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(65, 13);
-            this.label4.TabIndex = 17;
-            this.label4.Text = "Show in log:";
+            this.panelSetUp.Controls.Add(this.cbPriority);
+            this.panelSetUp.Controls.Add(this.labelThresPriority);
+            this.panelSetUp.Controls.Add(this.bQCheck);
+            this.panelSetUp.Controls.Add(this.bChFile);
+            this.panelSetUp.Controls.Add(this.bBrowseDir);
+            this.panelSetUp.Controls.Add(this.labelChecksumFile);
+            this.panelSetUp.Controls.Add(this.bBrowseFile);
+            this.panelSetUp.Controls.Add(this.tbChSumFile);
+            this.panelSetUp.Controls.Add(this.labelRootDIrectory);
+            this.panelSetUp.Controls.Add(this.tbDir);
+            this.panelSetUp.Location = new System.Drawing.Point(0, 0);
+            this.panelSetUp.Name = "panelSetUp";
+            this.panelSetUp.Size = new System.Drawing.Size(505, 128);
+            this.panelSetUp.TabIndex = 11;
             // 
             // cbPriority
             // 
@@ -301,7 +274,7 @@
             this.Controls.Add(this.bAbout);
             this.Controls.Add(this.rtbLog);
             this.Controls.Add(this.bOptions);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panelSetUp);
             this.Controls.Add(this.bClose);
             this.Controls.Add(this.bStop);
             this.Name = "HashChecker";
@@ -309,8 +282,8 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.HashChecker_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.HashChecker_FormClosed);
             this.Load += new System.EventHandler(this.HashChecker_Load);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.panelSetUp.ResumeLayout(false);
+            this.panelSetUp.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -328,11 +301,9 @@
         private System.Windows.Forms.Label labelRootDIrectory;
         private System.Windows.Forms.Button bBrowseFile;
         private System.Windows.Forms.Button bBrowseDir;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panelSetUp;
         private System.Windows.Forms.Label labelThresPriority;
         private System.Windows.Forms.ComboBox cbPriority;
-        private System.Windows.Forms.ComboBox cbLogShow;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button bOptions;
         private System.Windows.Forms.RichTextBox rtbLog;
         private System.Windows.Forms.Button bAbout;

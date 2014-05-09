@@ -61,6 +61,15 @@ namespace HashCheckerProj.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Must not be bigger than fileSize.
+        /// </summary>
+        internal static string HashChecker_Must_not_be_bigger_than_fileSize {
+            get {
+                return ResourceManager.GetString("HashChecker_Must_not_be_bigger_than_fileSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hash Checker.
         /// </summary>
         internal static string HashChecker_setFormToNormal_Hash_Checker {
