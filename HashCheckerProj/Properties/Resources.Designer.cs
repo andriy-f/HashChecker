@@ -79,6 +79,26 @@ namespace HashCheckerProj.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Key {
+            get {
+                object obj = ResourceManager.GetObject("Key", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap KeyBig {
+            get {
+                object obj = ResourceManager.GetObject("KeyBig", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap openfolderHS {
@@ -94,6 +114,15 @@ namespace HashCheckerProj.Properties {
         internal static string OptionsForm_bOK_Click_Error_writing_to_registry_while_saving_data {
             get {
                 return ResourceManager.GetString("OptionsForm_bOK_Click_Error_writing_to_registry_while_saving_data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usage: click &apos;Options&apos; and select associations. After that you can just doubleclick checksum files (*.sfv, *.md5, *.sha1, etc) in Windows Explorer.
+        /// </summary>
+        internal static string SimpleUsageHelp {
+            get {
+                return ResourceManager.GetString("SimpleUsageHelp", resourceCulture);
             }
         }
     }

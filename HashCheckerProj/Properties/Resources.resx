@@ -121,13 +121,22 @@
   <data name="openfolderHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\openfolderhs.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="HashChecker_setFormToNormal_Hash_Checker">
-    <value xml:space="preserve">Hash Checker</value>
+  <data name="SimpleUsageHelp" xml:space="preserve">
+    <value>Usage: click 'Options' and select associations. After that you can just doubleclick checksum files (*.sfv, *.md5, *.sha1, etc) in Windows Explorer</value>
   </data>
-  <data name="OptionsForm_bOK_Click_Error_writing_to_registry_while_saving_data">
-    <value xml:space="preserve">Error writing to registry while saving data</value>
+  <data name="HashChecker_setFormToNormal_Hash_Checker" xml:space="preserve">
+    <value>Hash Checker</value>
   </data>
   <data name="HashChecker_Unsupported_mode" xml:space="preserve">
     <value>Unsupported mode</value>
+  </data>
+  <data name="OptionsForm_bOK_Click_Error_writing_to_registry_while_saving_data" xml:space="preserve">
+    <value>Error writing to registry while saving data</value>
+  </data>
+  <data name="KeyBig" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\KeyBig.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Key" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Key.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

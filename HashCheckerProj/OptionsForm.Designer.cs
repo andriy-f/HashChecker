@@ -34,7 +34,6 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpAssoc = new System.Windows.Forms.TabPage();
             this.cbAddComp2Clip = new System.Windows.Forms.CheckBox();
-            this.tpMisc = new System.Windows.Forms.TabPage();
             this.tabControl1.SuspendLayout();
             this.tpAssoc.SuspendLayout();
             this.SuspendLayout();
@@ -85,7 +84,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tpAssoc);
-            this.tabControl1.Controls.Add(this.tpMisc);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -114,16 +112,6 @@
             this.cbAddComp2Clip.Text = "Add \'Compare to hash in Clipboard\' file menu entry";
             this.cbAddComp2Clip.UseVisualStyleBackColor = true;
             // 
-            // tpMisc
-            // 
-            this.tpMisc.Location = new System.Drawing.Point(4, 22);
-            this.tpMisc.Name = "tpMisc";
-            this.tpMisc.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMisc.Size = new System.Drawing.Size(290, 194);
-            this.tpMisc.TabIndex = 1;
-            this.tpMisc.Text = "Misc";
-            this.tpMisc.UseVisualStyleBackColor = true;
-            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -149,7 +137,6 @@
         private System.Windows.Forms.Button bCancel;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tpAssoc;
-        private System.Windows.Forms.TabPage tpMisc;
         private System.Windows.Forms.CheckBox cbAddComp2Clip;
     }
 }

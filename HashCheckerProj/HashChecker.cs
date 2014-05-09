@@ -34,6 +34,7 @@
         public HashChecker(ProgramMode mode, string filePath = null)
         {
             this.InitializeComponent();
+            this.Icon = Resources.Key;
             
             switch (mode)
             {
@@ -429,14 +430,6 @@
         private void bOptions_Click(object sender, EventArgs e)
         {
             new OptionsForm().ShowDialog();
-        }
-
-        private void bHelp_Click(object sender, EventArgs e)
-        {
-            CustomMessageBoxes.Info(
-                string.Format(
-                    "Simple usage:\nClick Options and select associations. After that "
-                    + "you can just open hash files in Explorer"));
         }
 
         #endregion

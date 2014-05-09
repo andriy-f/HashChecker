@@ -45,7 +45,6 @@
             this.labelThresPriority = new System.Windows.Forms.Label();
             this.bOptions = new System.Windows.Forms.Button();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
-            this.bHelp = new System.Windows.Forms.Button();
             this.bAbout = new System.Windows.Forms.Button();
             this.labelTotalProgress = new System.Windows.Forms.Label();
             this.labelEntryProgress = new System.Windows.Forms.Label();
@@ -248,19 +247,9 @@
             this.rtbLog.TabIndex = 13;
             this.rtbLog.Text = "";
             // 
-            // bHelp
-            // 
-            this.bHelp.Location = new System.Drawing.Point(94, 460);
-            this.bHelp.Name = "bHelp";
-            this.bHelp.Size = new System.Drawing.Size(75, 23);
-            this.bHelp.TabIndex = 14;
-            this.bHelp.Text = "Help";
-            this.bHelp.UseVisualStyleBackColor = true;
-            this.bHelp.Click += new System.EventHandler(this.bHelp_Click);
-            // 
             // bAbout
             // 
-            this.bAbout.Location = new System.Drawing.Point(175, 460);
+            this.bAbout.Location = new System.Drawing.Point(95, 460);
             this.bAbout.Name = "bAbout";
             this.bAbout.Size = new System.Drawing.Size(75, 23);
             this.bAbout.TabIndex = 15;
@@ -310,7 +299,6 @@
             this.Controls.Add(this.labelEntryProgress);
             this.Controls.Add(this.labelTotalProgress);
             this.Controls.Add(this.bAbout);
-            this.Controls.Add(this.bHelp);
             this.Controls.Add(this.rtbLog);
             this.Controls.Add(this.bOptions);
             this.Controls.Add(this.panel1);
@@ -347,7 +335,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button bOptions;
         private System.Windows.Forms.RichTextBox rtbLog;
-        private System.Windows.Forms.Button bHelp;
         private System.Windows.Forms.Button bAbout;
         private System.Windows.Forms.Label labelTotalProgress;
         private System.Windows.Forms.Label labelEntryProgress;
