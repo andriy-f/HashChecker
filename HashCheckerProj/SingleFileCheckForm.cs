@@ -1,14 +1,10 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.WinForms
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
     using System.Drawing;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Windows.Forms;
+    using global::HashChecker.Core;
 
     /// <summary>
     /// Form for validating hash of file against a hash in clipboard
@@ -138,7 +134,7 @@
                 
                 this.fileHashCalculator.Finished += () =>
                     {
-                        if (!fileHashCalculator.HashCalculated)
+                        if (!this.fileHashCalculator.HashCalculated)
                         {
                             this.SetResultTextThreadSafe("Stopped", false);
                         }

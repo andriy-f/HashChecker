@@ -1,4 +1,4 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.WinForms
 {
     using System;
     using System.Drawing;
@@ -6,9 +6,9 @@
     using System.Linq;
     using System.Threading;
     using System.Windows.Forms;
+    using global::HashChecker.Core;
+    using global::HashChecker.WinForms.Properties;
 
-    using HashCheckerProj.Properties;
-    
     public partial class HashChecker : Form
     {
         #region Fields Consts
@@ -241,7 +241,7 @@
                 }
                 else
                 {
-                    CustomMessageBoxes.Error(string.Format("Specified hashfile '{0}' doesn't exist", cmdlineFName));
+                    CustomMessageBoxes.Error(string.Format("Specified hashfile '{0}' doesn't exist", this.cmdlineFName));
                 }
             }
         }

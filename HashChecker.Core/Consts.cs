@@ -1,4 +1,4 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.Core
 {
     public class Consts
     {

@@ -1,10 +1,9 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.WinForms
 {
     using System;
     using System.IO;
     using System.Windows.Forms;
-
-    using HashCheckerProj.Properties;
+    using global::HashChecker.WinForms.Properties;
 
     public static class Program
     {

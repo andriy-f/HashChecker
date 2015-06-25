@@ -1,4 +1,4 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.Core
 {
     using System;
     using System.Text;

@@ -1,10 +1,9 @@
-﻿namespace HashChecker.WinForms
+﻿namespace HashChecker.Core
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using global::HashChecker.Core;
 
     public class HashValidator
     {

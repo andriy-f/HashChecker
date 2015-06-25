@@ -1,4 +1,4 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.WinForms
 {
     partial class HashChecker
     {
@@ -13,9 +13,9 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (this.components != null))
             {
-                components.Dispose();
+                this.components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -134,7 +134,7 @@
             // bBrowseFile
             // 
             this.bBrowseFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bBrowseFile.Image = global::HashCheckerProj.Properties.Resources.openfolderHS;
+            this.bBrowseFile.Image = global::HashChecker.WinForms.Properties.Resources.openfolderHS;
             this.bBrowseFile.Location = new System.Drawing.Point(398, 32);
             this.bBrowseFile.Name = "bBrowseFile";
             this.bBrowseFile.Size = new System.Drawing.Size(27, 23);
@@ -145,7 +145,7 @@
             // bBrowseDir
             // 
             this.bBrowseDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bBrowseDir.Image = global::HashCheckerProj.Properties.Resources.openfolderHS;
+            this.bBrowseDir.Image = global::HashChecker.WinForms.Properties.Resources.openfolderHS;
             this.bBrowseDir.Location = new System.Drawing.Point(398, 58);
             this.bBrowseDir.Name = "bBrowseDir";
             this.bBrowseDir.Size = new System.Drawing.Size(27, 23);

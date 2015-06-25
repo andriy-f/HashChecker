@@ -3,7 +3,7 @@
     using System;
     using System.IO;
     using System.Reflection;
-
+    using HashChecker.WinForms;
     using NUnit.Framework;
 
     [TestFixture]
@@ -26,7 +26,7 @@
 
             var file1FullPath = Path.Combine(assemblyFolder, File1Path);
             System.Windows.Forms.Clipboard.SetText(File1Md5HashUpper);
-            HashCheckerProj.Program.Main(new[] { "-comp2clipboard", file1FullPath });
+            Program.Main(new[] { "-comp2clipboard", file1FullPath });
         }
 
         [Test]
@@ -40,7 +40,7 @@
 
             var file1FullPath = Path.Combine(assemblyFolder, File1Path);
             System.Windows.Forms.Clipboard.SetText(File1Md5HashInvalid);
-            HashCheckerProj.Program.Main(new[] { "-comp2clipboard", file1FullPath });
+            Program.Main(new[] { "-comp2clipboard", file1FullPath });
         }
 
         [Test]
@@ -52,7 +52,7 @@
             Assert.NotNull(assemblyFolder);
             var file1FullPath = Path.Combine(assemblyFolder, NonExistingPath);
             System.Windows.Forms.Clipboard.SetText(File1Md5HashInvalid);
-            HashCheckerProj.Program.Main(new[] { "-comp2clipboard", file1FullPath });
+            Program.Main(new[] { "-comp2clipboard", file1FullPath });
         }
     }
 }

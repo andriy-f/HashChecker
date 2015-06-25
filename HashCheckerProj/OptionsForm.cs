@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using HashCheckerProj.Properties;
-using Microsoft.Win32;
-
-namespace HashCheckerProj
+﻿namespace HashChecker.WinForms
 {
+    using System;
+    using System.Windows.Forms;
+    using global::HashChecker.WinForms.Properties;
+    using Microsoft.Win32;
+
     public partial class OptionsForm : Form
     {
         const string RootPath = @"HKEY_CURRENT_USER\";
@@ -28,32 +22,32 @@ namespace HashCheckerProj
 
         public OptionsForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             //Verify what is associated with this app
             if ((string)Registry.GetValue(FullClassesPath + HchkEntry + @"\" + Shellopencommand, "", "def") ==
-                _shellopencommandRegValue)
+                this._shellopencommandRegValue)
             {
                 for (int i = 0; i < 7; i++)
-                    clbAssoc.SetItemChecked(i,
+                    this.clbAssoc.SetItemChecked(i,
                                             (string)
-                                            Registry.GetValue(RootPath + SoftClassesPath + clbIndex2HashFileType(i), 
+                                            Registry.GetValue(RootPath + SoftClassesPath + this.clbIndex2HashFileType(i), 
                                             "", "def") == HchkEntry);
             }
             else
                 for (int i = 0; i < 7; i++)
-                    clbAssoc.SetItemChecked(i, false);
+                    this.clbAssoc.SetItemChecked(i, false);
 
             //Compare to hash in Clipboard File Context entry
-            cbAddComp2Clip.Checked=(
+            this.cbAddComp2Clip.Checked=(
                                             (string)
                                             Registry.GetValue(Cmp2HshCommandFullPath,
-                                            "", "def") == _shellCmp2HshClpbrdRegValue);
+                                            "", "def") == this._shellCmp2HshClpbrdRegValue);
         }
 
         private void bCancel_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
 
         private void bOK_Click(object sender, EventArgs e)
@@ -64,22 +58,22 @@ namespace HashCheckerProj
                 RegistryKey hchkEntryKey = Registry.CurrentUser.CreateSubKey(SoftClassesPath + HchkEntry);
                 if (hchkEntryKey != null)
                 {
-                    hchkEntryKey.CreateSubKey("DefaultIcon").SetValue("", _iconRegValue);
+                    hchkEntryKey.CreateSubKey("DefaultIcon").SetValue("", this._iconRegValue);
                     
-                    hchkEntryKey.CreateSubKey(Shellopencommand).SetValue("", _shellopencommandRegValue);
+                    hchkEntryKey.CreateSubKey(Shellopencommand).SetValue("", this._shellopencommandRegValue);
                     
                     hchkEntryKey.Close();
                 }
 
                 // File associations
                 for (int i = 0; i < 7; i++)
-                    if (clbAssoc.GetItemChecked(i))
-                        Registry.SetValue(FullClassesPath + clbIndex2HashFileType(i), string.Empty, HchkEntry);
+                    if (this.clbAssoc.GetItemChecked(i))
+                        Registry.SetValue(FullClassesPath + this.clbIndex2HashFileType(i), string.Empty, HchkEntry);
 
                 // Compare to hash in Clipboard file entry
-                if(cbAddComp2Clip.Checked)
-                    Registry.SetValue(Cmp2HshCommandFullPath, "", _shellCmp2HshClpbrdRegValue);
-                else DelSubKeyTreeNn(Cmp2HshPath);
+                if(this.cbAddComp2Clip.Checked)
+                    Registry.SetValue(Cmp2HshCommandFullPath, "", this._shellCmp2HshClpbrdRegValue);
+                else this.DelSubKeyTreeNn(Cmp2HshPath);
             }
             catch (Exception)
             {
@@ -89,7 +83,7 @@ namespace HashCheckerProj
 #endif
             }
             
-            Close();
+            this.Close();
         }
 
         private string clbIndex2HashFileType(int i)

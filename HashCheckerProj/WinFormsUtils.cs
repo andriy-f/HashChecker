@@ -1,4 +1,4 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.WinForms
 {
     using System.Drawing;
     using System.Windows.Forms;

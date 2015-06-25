@@ -8,7 +8,7 @@
     <ProjectGuid>{2BE97439-C3B8-45D7-BE36-E67D11BA66B3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HashCheckerProj</RootNamespace>
+    <RootNamespace>HashChecker.WinForms</RootNamespace>
     <AssemblyName>HashChecker</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -23,6 +23,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -35,7 +36,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -112,24 +112,14 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ChecksumFile.cs" />
-    <Compile Include="ChecksumFileEntry.cs" />
-    <Compile Include="Consts.cs" />
-    <Compile Include="CryptoUtils.cs" />
     <Compile Include="CustomSettings.cs" />
-    <Compile Include="EntryCheckResult.cs" />
-    <Compile Include="EntryResultType.cs" />
-    <Compile Include="FileHashCalculator.cs" />
-    <Compile Include="CRC32.cs" />
     <Compile Include="HashChecker.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="HashChecker.Designer.cs">
       <DependentUpon>HashChecker.cs</DependentUpon>
     </Compile>
-    <Compile Include="HashType.cs" />
     <Compile Include="HashValidator.cs" />
-    <Compile Include="InvalidHashException.cs" />
     <Compile Include="OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,7 +129,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="ProgramMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ConvertUtils.cs" />
     <Compile Include="CustomMessageBoxes.cs" />
     <Compile Include="SingleFileCheckForm.cs">
       <SubType>Form</SubType>
@@ -147,7 +136,6 @@
     <Compile Include="SingleFileCheckForm.Designer.cs">
       <DependentUpon>SingleFileCheckForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Utils.cs" />
     <Compile Include="WinFormsUtils.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
@@ -205,6 +193,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HashChecker.Core\HashChecker.Core.csproj">
+      <Project>{f8e9f883-c036-45d6-9fd7-c02b99dd9a96}</Project>
+      <Name>HashChecker.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

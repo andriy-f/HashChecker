@@ -1,8 +1,7 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.Core
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
 
     /// <summary>
     /// Class for prsing checksum files

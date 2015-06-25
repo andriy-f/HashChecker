@@ -1,14 +1,8 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.WinForms
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
-
-    using HashCheckerProj.Properties;
+    using global::HashChecker.WinForms.Properties;
 
     public partial class AboutBox : Form
     {

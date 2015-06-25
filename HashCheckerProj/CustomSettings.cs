@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace HashCheckerProj
+﻿namespace HashChecker.WinForms
 {
+    using System;
     using System.Threading;
-
-    using HashCheckerProj.Properties;
+    using global::HashChecker.WinForms.Properties;
 
     public static class CustomSettings
     {

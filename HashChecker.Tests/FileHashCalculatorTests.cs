@@ -1,8 +1,7 @@
 ﻿namespace HashChecker.Tests
 {
     using System.Security.Cryptography;
-
-    using HashCheckerProj;
+    using HashChecker.Core;
 
     using NUnit.Framework;
 

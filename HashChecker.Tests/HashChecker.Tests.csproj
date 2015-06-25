@@ -90,9 +90,13 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\HashCheckerProj\HashChecker.csproj">
+    <ProjectReference Include="..\HashChecker.Core\HashChecker.Core.csproj">
+      <Project>{f8e9f883-c036-45d6-9fd7-c02b99dd9a96}</Project>
+      <Name>HashChecker.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HashCheckerProj\HashChecker.WinForms.csproj">
       <Project>{2be97439-c3b8-45d7-be36-e67d11ba66b3}</Project>
-      <Name>HashChecker</Name>
+      <Name>HashChecker.WinForms</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,4 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.Core
 {
     /// <summary>
     /// Immutable result of validating a hash of a checksum file entry

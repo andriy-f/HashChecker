@@ -1,4 +1,4 @@
-﻿namespace HashCheckerProj
+﻿namespace HashChecker.Core
 {
     using System;
     using System.IO;
@@ -84,7 +84,7 @@
             this.state = StateType.InProgress;
             try
             {
-                using (var cryptoStream = new CryptoStream(Stream.Null, HashAlgorithm, CryptoStreamMode.Write))
+                using (var cryptoStream = new CryptoStream(Stream.Null, this.HashAlgorithm, CryptoStreamMode.Write))
                 {
                     using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
@@ -109,8 +109,8 @@
                 this.state = this.hashCalculated ? StateType.Calculated : StateType.Inconclusive;
                 if (this.hashCalculated)
                 {
-                    this.Hash = HashAlgorithm.Hash;
-                    this.OnCalculated(HashAlgorithm.Hash);
+                    this.Hash = this.HashAlgorithm.Hash;
+                    this.OnCalculated(this.HashAlgorithm.Hash);
                 }
 
                 this.OnFinished();
@@ -121,7 +121,7 @@
                 return null;
             }
 
-            return HashAlgorithm.Hash;
+            return this.HashAlgorithm.Hash;
         }
 
         public void RequestStop()
