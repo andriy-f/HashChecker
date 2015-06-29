@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="HashCheckerSetup" Language="1033" Version="1.0.0.0" Manufacturer="" UpgradeCode="dfb9f189-da14-4d81-8627-e81295099d55">
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+	<Product Id="*" Name="HashChecker" Language="1033" Version="1.2.0.0" 
+           Manufacturer="Andriy Fetsyuk" UpgradeCode="{CFD9E7DB-FB09-471A-989C-584375C89682}">
+		<Package Id="*" Keywords="Installer" Description="HashChecker 1.2 Installer" InstallerVersion="200" Compressed="yes" 
+             InstallScope="perMachine" Languages="1033" SummaryCodepage="1252" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-		<MediaTemplate />
+		<MediaTemplate EmbedCab="yes" />
 
 		<Feature Id="ProductFeature" Title="HashCheckerSetup" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
 		</Feature>
 	</Product>
 
-	<Fragment>
+  <Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="HashCheckerSetup" />
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="AndriyFetsyuk" Name="Andriy Fetsyuk" >
+          <Directory Id="INSTALLFOLDER" Name="HashChecker" />
+        </Directory>
 			</Directory>
 		</Directory>
 	</Fragment>
@@ -22,9 +26,9 @@
 	<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
 			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
-			<!-- <Component Id="ProductComponent"> -->
-				<!-- TODO: Insert files, registry keys, and other resources here. -->
-			<!-- </Component> -->
+			<Component Id="ProductComponent">
+        <File Source="$(var.HashChecker.WinForms.TargetDir)HashChecker.exe" />
+			</Component>
 		</ComponentGroup>
 	</Fragment>
 </Wix>
