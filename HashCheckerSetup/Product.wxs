@@ -7,7 +7,8 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" />
     <Property Id='DiskPrompt' Value="HashChecker Installation [1]" />
-
+    <Icon Id="HashChecker.ico" SourceFile="..\HashCheckerProj\Key.ico" />
+    
     <Feature Id="ProductFeature" Title="HashCheckerSetup" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentRef Id="ProgramMenuDir" />
@@ -38,8 +39,10 @@
       </Component>
       <Component Id="HashChecker.WinForms">
         <File Source="$(var.HashChecker.WinForms.TargetDir)HashChecker.exe" KeyPath="yes" >
-          <Shortcut Id="startmenuHashChecker" Directory="ProgramMenuDir" Name="HashChecker" WorkingDirectory="INSTALLDIR" Advertise="yes" />
-          <Shortcut Id="desktopHashChecker" Directory="DesktopFolder" Name="HashChecker" WorkingDirectory="INSTALLDIR" Advertise="yes" />
+          <Shortcut Id="startmenuHashChecker" Directory="ProgramMenuDir" Name="HashChecker" WorkingDirectory="INSTALLDIR" Advertise="yes" 
+                    Icon="HashChecker.ico" IconIndex="0" />
+          <Shortcut Id="desktopHashChecker" Directory="DesktopFolder" Name="HashChecker" WorkingDirectory="INSTALLDIR" Advertise="yes" 
+                    Icon="HashChecker.ico" IconIndex="0" />
         </File>
         <File Source="$(var.HashChecker.WinForms.TargetDir)HashChecker.exe.config" KeyPath="no" />
       </Component>
