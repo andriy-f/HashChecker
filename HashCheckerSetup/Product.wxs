@@ -11,6 +11,7 @@
     
     <Feature Id="CompleteFeature" Title="HashCheckerSetup" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="Manual" />
       <ComponentRef Id="ProgramMenuDir" />
     </Feature>
 
@@ -44,13 +45,15 @@
           <Shortcut Id="desktopHashChecker" Directory="DesktopFolder" Name="HashChecker" WorkingDirectory="INSTALLDIR" Advertise="yes" 
                     Icon="HashChecker.ico" IconIndex="0" />
         </File>
-        <File Source="$(var.HashChecker.WinForms.TargetDir)HashChecker.exe.config" KeyPath="no" />
       </Component>
-      <Component Id='Manual'>
-        <File Id='Manual' Name='Manual.pdf' DiskId='1' Source='..\Documentation\Manual.pdf' KeyPath='yes'>
-          <Shortcut Id='startmenuManual' Directory='ProgramMenuDir' Name='Instruction Manual' Advertise='yes' />
-        </File>
+      <Component Id="HashChecker.WinForms.config">
+        <File Source="$(var.HashChecker.WinForms.TargetDir)HashChecker.exe.config" KeyPath="yes" />
       </Component>
     </ComponentGroup>
+    <Component Id='Manual' Directory="INSTALLFOLDER">
+      <File Id='Manual' Name='Manual.pdf' DiskId='1' Source='..\Documentation\Manual.pdf' KeyPath='yes'>
+        <Shortcut Id='startmenuManual' Directory='ProgramMenuDir' Name='Instruction Manual' Advertise='yes' />
+      </File>
+    </Component>
   </Product>
 </Wix>
