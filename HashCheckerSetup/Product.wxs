@@ -9,7 +9,7 @@
     <Property Id='DiskPrompt' Value="HashChecker Installation [1]" />
     <Icon Id="HashChecker.ico" SourceFile="..\HashCheckerProj\Key.ico" />
     
-    <Feature Id="ProductFeature" Title="HashCheckerSetup" Level="1">
+    <Feature Id="CompleteFeature" Title="HashCheckerSetup" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentRef Id="ProgramMenuDir" />
     </Feature>
