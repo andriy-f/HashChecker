@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashChecker.WinForms", "HashCheckerProj\HashChecker.WinForms.csproj", "{2BE97439-C3B8-45D7-BE36-E67D11BA66B3}"
 EndProject
@@ -144,20 +144,20 @@ Global
 		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.Release|x64.ActiveCfg = Release|x86
 		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.Release|x86.ActiveCfg = Release|x86
 		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.Release|x86.Build.0 = Release|x86
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|Any CPU.ActiveCfg = ReleaseSetup-x64|x64
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|Any CPU.Build.0 = ReleaseSetup-x64|x64
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|Mixed Platforms.ActiveCfg = ReleaseSetup-x86|x86
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|Mixed Platforms.Build.0 = ReleaseSetup-x86|x86
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|x64.ActiveCfg = ReleaseSetup-x86|x64
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|x64.Build.0 = ReleaseSetup-x86|x64
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|x86.ActiveCfg = ReleaseSetup-x86|x64
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|x86.Build.0 = ReleaseSetup-x86|x64
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|Any CPU.ActiveCfg = ReleaseSetup-x86|x86
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|Any CPU.Build.0 = ReleaseSetup-x86|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|Any CPU.ActiveCfg = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|Any CPU.Build.0 = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|Mixed Platforms.ActiveCfg = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|Mixed Platforms.Build.0 = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|x64.ActiveCfg = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|x64.Build.0 = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|x86.ActiveCfg = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x64|x86.Build.0 = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|Any CPU.ActiveCfg = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|Any CPU.Build.0 = Release|x86
 		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|Mixed Platforms.ActiveCfg = Release|x86
 		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|Mixed Platforms.Build.0 = Release|x86
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|x64.ActiveCfg = ReleaseSetup-x86|x86
-		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|x64.Build.0 = ReleaseSetup-x86|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|x64.ActiveCfg = Release|x86
+		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|x64.Build.0 = Release|x86
 		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|x86.ActiveCfg = Release|x86
 		{5A3B40BE-DCEC-4719-83F6-532B4792659B}.ReleaseSetup-x86|x86.Build.0 = Release|x86
 	EndGlobalSection
