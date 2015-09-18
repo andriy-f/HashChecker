@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define ProductName = "HashChecker" ?>
+  <?define ProductVersion = "1.2" ?>
+  <?define ProductFullVersion = "1.2.0.0" ?>
+  <?define ProductAuthor = "Andriy Fetsyuk" ?>
+  
+  <?if $(var.Platform) = x64 ?>
+    <?define bitness = "(64 bit)" ?>
+    <?define Win64 = "yes" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+    <?define ProductUpgradeCode = "{CFD9E7DB-FB09-471A-989C-584375C89682}" ?>
+  <?else ?>
+    <?define bitness = "(32 bit)" ?>
+    <?define Win64 = "no" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+    <?define ProductUpgradeCode = "{1847060A-B25F-4C1A-B1A9-64970A03F5FC}" ?>
+  <?endif ?>
+  
+  <?define ProductDisplayName = "$(var.ProductName) $(var.bitness)" ?>
+    
+  <Product Id="*" Name="$(var.ProductDisplayName)" Language="1033" Version="$(var.ProductFullVersion)" Manufacturer="$(var.ProductAuthor)" 
+           UpgradeCode="$(var.ProductUpgradeCode)">
+    <Package Id="*" Keywords="Installer" Description="HashChecker $(var.ProductVersion) Installer" InstallerVersion="200" Compressed="yes"
+           InstallScope="perMachine" Languages="1033" SummaryCodepage="1252" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    <Property Id="DiskPrompt" Value="HashChecker Installation [1]" />
+    <Icon Id="HashChecker.ico" SourceFile="..\HashCheckerProj\Key.ico" />
+    
+    <Feature Id="CompleteFeature" Title="HashCheckerSetup" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="Manual" />
+      <ComponentRef Id="ProgramMenuDir" />
+    </Feature>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="AndriyFetsyuk" Name="Andriy Fetsyuk" >
+          <Directory Id="INSTALLFOLDER" Name="HashChecker" />
+        </Directory>
+      </Directory>
+      
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="HashChecker">
+          <Component Id="ProgramMenuDir" Guid="{CFB925D4-B05B-40EF-B410-80807A580DDA}">
+            <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+            <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Type="string" Value="" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="HashChecker.Core">
+        <File Source="$(var.HashChecker.Core.TargetDir)HashChecker.Core.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="HashChecker.WinForms">
+        <File Source="$(var.HashChecker.WinForms.TargetDir)HashChecker.exe" KeyPath="yes" >
+          <Shortcut Id="startmenuHashChecker" Directory="ProgramMenuDir" Name="HashChecker" WorkingDirectory="INSTALLDIR" Advertise="yes" 
+                    Icon="HashChecker.ico" IconIndex="0" />
+          <Shortcut Id="desktopHashChecker" Directory="DesktopFolder" Name="HashChecker" WorkingDirectory="INSTALLDIR" Advertise="yes" 
+                    Icon="HashChecker.ico" IconIndex="0" />
+        </File>
+      </Component>
+      <Component Id="HashChecker.WinForms.config">
+        <File Source="$(var.HashChecker.WinForms.TargetDir)HashChecker.exe.config" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+    <Component Id="Manual" Directory="INSTALLFOLDER">
+      <File Id="Manual" Name="Manual.pdf" Source="..\Documentation\Manual.pdf" KeyPath="yes">
+        <Shortcut Id="startmenuManual" Directory="ProgramMenuDir" Name="Instruction Manual" Advertise="yes" />
+      </File>
+    </Component>
+  </Product>
+</Wix>
