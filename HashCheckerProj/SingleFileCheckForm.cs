@@ -59,15 +59,7 @@
 
         private void SetResultText(string message, bool success)
         {
-            if (success)
-            {
-                this.labelResultText.ForeColor = Color.Green;
-            }
-            else
-            {
-                this.labelResultText.ForeColor = Color.Red;
-            }
-
+            this.labelResultText.ForeColor = success ? Color.Green : Color.Red;
             this.labelResultText.Text = message;
         }
 
@@ -105,7 +97,7 @@
                 }
                 
                 string expectedHash = Clipboard.GetText();
-
+                
                 HashType hashType;
                 try
                 {
@@ -116,20 +108,16 @@
                     throw new InvalidHashException("That's not a valid hash in clipboard", ex);
                 }
 
+                this.tbHashInClipboard.Text = string.Format("{0} ({1})", expectedHash.ToUpperInvariant(), hashType);
                 this.fileHashCalculator = new FileHashCalculator { HashAlgorithm = CryptoUtils.ToHashAlgorithm(hashType) };
                 this.fileHashCalculator.ChunkProcessed += (processed, total) => this.SetProgressThreadSafe((int)((processed * 100) / total));
 
                 this.fileHashCalculator.Calculated += (actualHash) =>
                 {
+                    var actualHashString = ConvertUtils.ToString(actualHash);
+                    this.tbActualHash.Invoke(new Action(() => { this.tbActualHash.Text = actualHashString; }));
                     bool isValid = ConvertUtils.ByteArraysEqual(actualHash, ConvertUtils.ToBytes(expectedHash));
-                    if (isValid)
-                    {
-                        this.SetResultTextThreadSafe("Correct", true);
-                    }
-                    else
-                    {
-                        this.SetResultTextThreadSafe("Wrong", false);
-                    }
+                    this.SetResultTextThreadSafe(isValid ? "Correct" : "Wrong", isValid);
                 };
                 
                 this.fileHashCalculator.Finished += () =>
@@ -141,7 +129,7 @@
                     };
                 
                 this.validatingThread = new Thread(this.CalculateHashAsync);
-                this.validatingThread.Start(new ValidateHashParams()
+                this.validatingThread.Start(new ValidateHashParams
                 {
                     FilePath = this.fileToValidate,
                     ExpectedHash = expectedHash,
