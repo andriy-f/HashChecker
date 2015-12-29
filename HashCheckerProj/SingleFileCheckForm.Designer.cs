@@ -56,7 +56,7 @@
             this.tbFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFile.Location = new System.Drawing.Point(142, 9);
-            this.tbFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbFile.Margin = new System.Windows.Forms.Padding(4);
             this.tbFile.Name = "tbFile";
             this.tbFile.ReadOnly = true;
             this.tbFile.Size = new System.Drawing.Size(545, 22);
@@ -67,7 +67,7 @@
             this.pbValidateProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbValidateProgress.Location = new System.Drawing.Point(20, 113);
-            this.pbValidateProgress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pbValidateProgress.Margin = new System.Windows.Forms.Padding(4);
             this.pbValidateProgress.Name = "pbValidateProgress";
             this.pbValidateProgress.Size = new System.Drawing.Size(668, 44);
             this.pbValidateProgress.TabIndex = 2;
@@ -76,7 +76,7 @@
             // 
             this.bClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bClose.Location = new System.Drawing.Point(588, 220);
-            this.bClose.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.bClose.Margin = new System.Windows.Forms.Padding(4);
             this.bClose.Name = "bClose";
             this.bClose.Size = new System.Drawing.Size(100, 28);
             this.bClose.TabIndex = 3;
@@ -88,7 +88,7 @@
             // 
             this.bAbout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bAbout.Location = new System.Drawing.Point(16, 220);
-            this.bAbout.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.bAbout.Margin = new System.Windows.Forms.Padding(4);
             this.bAbout.Name = "bAbout";
             this.bAbout.Size = new System.Drawing.Size(100, 28);
             this.bAbout.TabIndex = 4;
@@ -171,7 +171,7 @@
             this.Controls.Add(this.pbValidateProgress);
             this.Controls.Add(this.tbFile);
             this.Controls.Add(this.lblFile);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(461, 211);
             this.Name = "SingleFileCheckForm";
             this.Text = "Hash Checker";

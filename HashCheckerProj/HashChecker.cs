@@ -31,8 +31,8 @@
         public HashChecker(ProgramMode mode, string filePath = null)
         {
             this.InitializeComponent();
-            this.Icon = Resources.Key;
-            
+            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+
             switch (mode)
             {
                 case ProgramMode.Standard:

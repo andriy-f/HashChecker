@@ -26,6 +26,8 @@
 
         private void SingleFileCheckForm_Load(object sender, EventArgs e)
         {
+            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+
             try
             {
                 this.ValidateFile();
