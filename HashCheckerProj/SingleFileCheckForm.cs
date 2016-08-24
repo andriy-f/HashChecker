@@ -11,17 +11,25 @@
     /// </summary>
     public partial class SingleFileCheckForm : Form
     {
-        private readonly string fileToValidate;
+        private string fileToValidate;
+
+        public string FileToValidate
+        {
+            get { return this.fileToValidate; }
+            set
+            {
+                this.fileToValidate = value;
+                this.tbFile.Text = value;
+            }
+        }
 
         private FileHashCalculator fileHashCalculator;
 
         private Thread validatingThread;
 
-        public SingleFileCheckForm(string fileToValidate)
+        public SingleFileCheckForm()
         {
             this.InitializeComponent();
-            this.fileToValidate = fileToValidate;
-            this.tbFile.Text = fileToValidate;
         }
 
         private void SingleFileCheckForm_Load(object sender, EventArgs e)
@@ -133,7 +141,7 @@
                 this.validatingThread = new Thread(this.CalculateHashAsync);
                 this.validatingThread.Start(new ValidateHashParams
                 {
-                    FilePath = this.fileToValidate,
+                    FilePath = this.FileToValidate,
                     ExpectedHash = expectedHash,
                     FileHashCalculator = this.fileHashCalculator
                 });

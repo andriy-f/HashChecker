@@ -16,7 +16,7 @@
         // locals
         private const string ChecksumFileFilter = @"All Supported|*.sfv;*.md5;*.sha;*.sha1;*.sha256;*.sha384;*.sha512|sfv|*.sfv|md5|*.md5|sha1|*.sha;*.sha1|sha256|*.sha256|sha384|*.sha384|sha512|*.sha512|All(*.*)|*.*";
 
-        private readonly string cmdlineFName;
+        private string cmdlineFName;
 
         private volatile HashValidator hashValidator;
 
@@ -26,25 +26,20 @@
 
         #endregion
 
+        public ProgramMode Mode { get; set; }
+
+        public string ChecksumFileToCheck
+        {
+            get { return this.cmdlineFName; }
+            set { this.cmdlineFName = value; }
+        }
+
         #region Constructors
 
-        public HashChecker(ProgramMode mode, string filePath = null)
+        public HashChecker()
         {
             this.InitializeComponent();
             this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-
-            switch (mode)
-            {
-                case ProgramMode.Standard:
-                    break;
-                case ProgramMode.ValidateWithClipboard:
-                    throw new ArgumentException("Use new form for checking clipboard hash");
-                case ProgramMode.ValidateChecksumFile:
-                    this.cmdlineFName = filePath;
-                    break;
-                default:
-                    throw new ArgumentException(Resources.HashChecker_Unsupported_mode, "mode");
-            }
 
             try
             { 
