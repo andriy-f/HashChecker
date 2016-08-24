@@ -224,6 +224,10 @@
       <Project>{f8e9f883-c036-45d6-9fd7-c02b99dd9a96}</Project>
       <Name>HashChecker.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HashChecker.Infrastructure\HashChecker.Infrastructure.csproj">
+      <Project>{0ee55ebc-4b47-44b8-8492-ffb1873b66e9}</Project>
+      <Name>HashChecker.Infrastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
