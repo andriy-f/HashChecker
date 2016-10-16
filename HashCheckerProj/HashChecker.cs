@@ -8,6 +8,7 @@
     using System.Windows.Forms;
     using global::HashChecker.Core;
     using global::HashChecker.WinForms.Properties;
+    using Microsoft.WindowsAPICodePack.Dialogs;
 
     public partial class HashChecker : Form
     {
@@ -262,17 +263,20 @@
             if ((openFileDlg1.ShowDialog() == DialogResult.OK) && File.Exists(openFileDlg1.FileName))
             {
                 this.tbChSumFile.Text = openFileDlg1.FileName;
-                this.tbDir.Text = Utils.GetFileDirectory(openFileDlg1.FileName);                
+                this.tbDir.Text = Utils.GetFileDirectory(openFileDlg1.FileName);
             }
         }
 
         private void bBrowseDir_Click(object sender, EventArgs e)
         {
-            var fdbd1 = new FolderBrowserDialog();
-            fdbd1.ShowNewFolderButton = false;
-            if (fdbd1.ShowDialog() == DialogResult.OK)
+            var selectFolerDialog = new CommonOpenFileDialog()
             {
-                this.tbDir.Text = fdbd1.SelectedPath;
+                IsFolderPicker = true
+            };
+
+            if (selectFolerDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                this.tbDir.Text = selectFolerDialog.FileName;
             }
         }
 
