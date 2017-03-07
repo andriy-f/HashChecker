@@ -1,9 +1,11 @@
 # HashChecker
 
+See documentation [here](http://andriy-f.github.io/HashChecker/).
+
 ## 1. INSTALLATION
 
-1. Extract contents of ZIP archive to separate folder on disk
-1. Launch application, click 'Options', on 'Associations' tab select options you need, click OK
+1.1. Extract contents of ZIP archive to separate folder on disk
+1.2. Launch application, click 'Options', on 'Associations' tab select options you need, click OK
 
 ## 2. USAGE
 
