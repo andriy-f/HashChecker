@@ -1,0 +1,5 @@
+title: HashChecker
+description: HashChecker is an application which allows easily allows to verify integrity of files (usually downloaded from internet)
+show_downloads: false
+google_analytics:
+theme: jekyll-theme-cayman
