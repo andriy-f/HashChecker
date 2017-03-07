@@ -3,6 +3,7 @@ bin
 obj
 Debug
 Release
+/dist/
 *.suo
 *.user
 _ReSharper.*
