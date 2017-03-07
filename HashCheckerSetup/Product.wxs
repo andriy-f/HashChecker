@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?define ProductName = "HashChecker" ?>
-  <?define ProductVersion = "1.2" ?>
-  <?define ProductFullVersion = "1.2.0.0" ?>
+  <?define ProductVersion = "1.3" ?>
+  <?define ProductFullVersion = "1.3.0.0" ?>
   <?define ProductAuthor = "Andriy Fetsyuk" ?>
 
   <?if $(var.Platform) = x64 ?>
