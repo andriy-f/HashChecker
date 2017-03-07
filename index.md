@@ -2,6 +2,7 @@
 
 ## 1. INSTALLATION
 
+1.  Download \*.bin.zip archive of latest release from https://github.com/andriy-f/HashChecker/releases
 1.  Extract contents of ZIP archive to separate folder on disk
 1.  Launch application, click 'Options', on 'Associations' tab select options you need, click OK
 
