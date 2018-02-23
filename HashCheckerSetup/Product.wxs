@@ -3,7 +3,7 @@
   <?define ProductName = "HashChecker" ?>
   <?define ProductVersion = "1.3" ?>
   <?define ProductFullVersion = "1.3.0.0" ?>
-  <?define ProductAuthor = "Andriy Fetsyuk" ?>
+  <?define ProductAuthor = "Andriy Fetsyuk (forspam.smith@gmail.com)" ?>
 
   <?if $(var.Platform) = x64 ?>
   <?define bitness = "(64 bit)" ?>
