@@ -60,7 +60,8 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <PropertyGroup>
-    <PostBuildEvent />
+    <PostBuildEvent>COPY /Y "!(TargetPath)" "$(ProjectDir)..\dist\$(TargetName)-$(PlatformName)$(TargetExt)"
+COPY /Y "!(TargetPdbPath)" "$(ProjectDir)..\dist\$(TargetName)-$(PlatformName).wixpdb"</PostBuildEvent>
   </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
